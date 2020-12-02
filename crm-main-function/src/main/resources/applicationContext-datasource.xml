@@ -13,18 +13,18 @@
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="username" value="root"/>
         <property name="password" value="123"/>
-        <property name="url" value="jdbc:mysql://192.168.223.133:3306/crm?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/crmdb?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
     </bean>
     <!-- 配置SqlSessionFactory -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!-- 必须注入属性dataSource -->
         <property name="dataSource" ref="dataSource"/>
-        <!-- 如果mybatis没有特殊的配置(比如别名等)，configLocation可以省去 ;否则，不能省略-->
+        <!-- 如果mybatis没有特殊的配置(比如别名, 日志等)，configLocation可以省去 ;否则，不能省略-->
         <property name="configLocation" value="classpath:mybatis-config.xml"/>
     </bean>
     <!-- mapper注解扫描器配置,扫描@MapperScan注解,自动生成代码对象 -->
     <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.bjpowernode.crm.mapper"/>
+        <property name="basePackage" value="com.bjming.crm.settings.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
@@ -34,7 +34,7 @@
     </bean>
     <!-- 配置事务 -->
     <aop:config>
-        <aop:pointcut expression="execution(* com.bjpowernode.crm..service.*.*(..))" id="allMethodPointcut"/>
+        <aop:pointcut expression="execution(* com.bjming.crm..service.*.*(..))" id="allMethodPointcut"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="allMethodPointcut"/>
     </aop:config>
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
