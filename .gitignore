@@ -1,18 +1,16 @@
 # IntelliJ project files
+*/.idea/
 .idea
 *.iml
+*/*.iml
+
 out
+*/out/
 gen
-/.apt_generated/
-/.classpath
-/.factorypath
-/.project
-/.settings/
-/.springBeans
-/target/
+*/gen/
+target
+*/target/
 /user-profile-analysis.iml
-/.idea
-.DS_Store
 
 # Compiled class file
 *.class
