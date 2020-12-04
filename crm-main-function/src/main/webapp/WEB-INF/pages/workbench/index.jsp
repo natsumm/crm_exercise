@@ -130,7 +130,7 @@ String basePath = request.getScheme() + "://" + request.getServerName()
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='login.html';">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='settings/qx/user/logout.do';">确定</button>
 				</div>
 			</div>
 		</div>

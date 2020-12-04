@@ -4,6 +4,7 @@
 *.iml
 */*.iml
 
+#  编译目录
 out
 */out/
 gen

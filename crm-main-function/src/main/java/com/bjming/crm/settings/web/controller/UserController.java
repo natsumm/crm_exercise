@@ -70,6 +70,23 @@ public class UserController {
         }
         return returnObject;
     }
+
+    @RequestMapping("/settings/qx/user/logout.do")
+    public String logout(HttpSession session, HttpServletResponse response){
+        //清空session, 销毁cookie
+        if(session!=null){
+            session.removeAttribute(MyConstants.SESSION_USER);
+        }
+        Cookie act = new Cookie("loginAct", "");
+        Cookie pwd = new Cookie("loginPwd", "");
+        act.setMaxAge(0);
+        pwd.setMaxAge(0);
+        response.addCookie(act);
+        response.addCookie(pwd);
+        //分属不同的业务, 使用重定向跳转
+        //return "redirect:/"; //直接跳转至IndexController的toIndex()方法的@RequestMapping
+        return "redirect:/settings/qx/user/toLogin.do"; //使用"redirect", "forward"关键字进行跳转页面不与视图解析器一同工作, 需要以斜杠"/"开头, 表示从应用名开始"crm/", 不加表示从相对路径开始, 这里就是从 "crm/settings/qx/user/" 开始
+    }
 }
 
 
