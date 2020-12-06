@@ -35,9 +35,9 @@ String basePath = request.getScheme() + "://" + request.getServerName()
 			//当前项目颜色变成白色
 			$(this).children("a").css("color","white");
 		});
-		
-		
-		window.open("main/index.html","workareaFrame");
+
+
+        window.open("main/index.jsp", "workareaFrame");
 		
 	});
 	
@@ -146,7 +146,7 @@ String basePath = request.getScheme() + "://" + request.getServerName()
 						<span class="glyphicon glyphicon-user"></span> ${sessionScope.sessionUser.name} <span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="settings/index.jsp"><span class="glyphicon glyphicon-wrench"></span> 系统设置</a></li>
+                        <li><a href="settings/toIndex.do"><span class="glyphicon glyphicon-wrench"></span> 系统设置</a></li>
 						<li><a href="javascript:void(0)" data-toggle="modal" data-target="#myInformation"><span class="glyphicon glyphicon-file"></span> 我的资料</a></li>
 						<li><a href="javascript:void(0)" data-toggle="modal" data-target="#editPwdModal"><span class="glyphicon glyphicon-edit"></span> 修改密码</a></li>
 						<li><a href="javascript:void(0);" data-toggle="modal" data-target="#exitModal"><span class="glyphicon glyphicon-off"></span> 退出</a></li>

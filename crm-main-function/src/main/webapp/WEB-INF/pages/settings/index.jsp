@@ -97,7 +97,9 @@ String basePath = request.getScheme() + "://" + request.getServerName()
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='login.jsp';">确定</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                            onclick="window.location.href='settings/qx/user/logout.do';">确定
+                    </button>
 				</div>
 			</div>
 		</div>
@@ -105,12 +107,14 @@ String basePath = request.getScheme() + "://" + request.getServerName()
 	
 	<!-- 顶部 -->
 	<div id="top" style="height: 50px; background-color: #3C3C3C; width: 100%;">
-		<div style="position: absolute; top: 5px; left: 0px; font-size: 30px; font-weight: 400; color: white; font-family: 'times new roman'">CRM &nbsp;<span style="font-size: 12px;">&copy;2017&nbsp;动力节点</span></div>
+        <div style="position: absolute; top: 5px; left: 0px; font-size: 30px; font-weight: 400; color: white; font-family: 'times new roman'">
+            CRM &nbsp;<span style="font-size: 12px;">&copy;2017&nbsp;xxxx</span></div>
 		<div style="position: absolute; top: 15px; right: 15px;">
 			<ul>
 				<li class="dropdown user-dropdown">
 					<a href="javascript:void(0)" style="text-decoration: none; color: white;" class="dropdown-toggle" data-toggle="dropdown">
-						<span class="glyphicon glyphicon-user"></span> zhangsan <span class="caret"></span>
+                        <span class="glyphicon glyphicon-user"></span> ${sessionScope.sessionUser.name} <span
+                            class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
 						<li><a href="workbench/index.html"><span class="glyphicon glyphicon-home"></span> 工作台</a></li>
@@ -181,7 +185,7 @@ String basePath = request.getScheme() + "://" + request.getServerName()
 			<div style="position: relative; width: 34%; height: 50%; left: 66%; top: -200%">
 				数据管理
 				<br><br>
-				<a href="dictionary/index.html">数据字典表</a>
+                <a href="settings/dictionary/toIndex.do">数据字典表</a>
 				<br>
 				<a href="javascript:void(0);">导入</a>
 				<br>

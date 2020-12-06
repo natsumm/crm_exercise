@@ -1,10 +1,15 @@
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String basePath = request.getScheme() + "://" + request.getServerName()
+            + ":" + request.getServerPort() + request.getContextPath() + "/";
+%>
 <html>
 <head>
+    <base href="<%=basePath%>"/>
 <meta charset="UTF-8">
-<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+    <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+    <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
 	//页面加载完毕
@@ -30,9 +35,9 @@
 			//当前项目颜色变成白色
 			$(this).children("a").css("color","white");
 		});
-		
-		
-		window.open("type/index.html","workareaFrame");
+
+        //在工作区窗口中打开 "数据字典类型主页面"
+        window.open("settings/dictionary/type/toIndex.do", "workareaFrame");
 		
 	});
 	
@@ -104,7 +109,9 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='../../login.jsp';">更新</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                            onclick="window.location.href='login.jsp';">更新
+                    </button>
 				</div>
 			</div>
 		</div>
@@ -125,7 +132,9 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='../../login.jsp';">确定</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                            onclick="window.location.href='settings/qx/user/logout.do';">确定
+                    </button>
 				</div>
 			</div>
 		</div>
@@ -133,16 +142,18 @@
 	
 	<!-- 顶部 -->
 	<div id="top" style="height: 50px; background-color: #3C3C3C; width: 100%;">
-		<div style="position: absolute; top: 5px; left: 0px; font-size: 30px; font-weight: 400; color: white; font-family: 'times new roman'">CRM &nbsp;<span style="font-size: 12px;">&copy;2017&nbsp;动力节点</span></div>
+        <div style="position: absolute; top: 5px; left: 0px; font-size: 30px; font-weight: 400; color: white; font-family: 'times new roman'">
+            CRM &nbsp;<span style="font-size: 12px;">&copy;2017&nbsp;xxxx</span></div>
 		<div style="position: absolute; top: 15px; right: 15px;">
 			<ul>
 				<li class="dropdown user-dropdown">
 					<a href="javascript:void(0)" style="text-decoration: none; color: white;" class="dropdown-toggle" data-toggle="dropdown">
-						<span class="glyphicon glyphicon-user"></span> zhangsan <span class="caret"></span>
+                        <span class="glyphicon glyphicon-user"></span> ${sessionScope.sessionUser.name} <span
+                            class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="../../workbench/index.jsp"><span class="glyphicon glyphicon-home"></span> 工作台</a></li>
-						<li><a href="../index.jsp"><span class="glyphicon glyphicon-wrench"></span> 系统设置</a></li>
+                        <li><a href="workbench/index.jsp"><span class="glyphicon glyphicon-home"></span> 工作台</a></li>
+                        <li><a href="index.jsp"><span class="glyphicon glyphicon-wrench"></span> 系统设置</a></li>
 						<li><a href="javascript:void(0)" data-toggle="modal" data-target="#myInformation"><span class="glyphicon glyphicon-file"></span> 我的资料</a></li>
 						<li><a href="javascript:void(0)" data-toggle="modal" data-target="#editPwdModal"><span class="glyphicon glyphicon-edit"></span> 修改密码</a></li>
 						<li><a href="javascript:void(0);" data-toggle="modal" data-target="#exitModal"><span class="glyphicon glyphicon-off"></span> 退出</a></li>
@@ -159,7 +170,8 @@
 		<div id="navigation" style="left: 0px; width: 18%; position: relative; height: 100%; overflow:auto;">
 		
 			<ul id="no1" class="nav nav-pills nav-stacked">
-				<li class="liClass"><a href="type/index.html" target="workareaFrame"><span class="glyphicon glyphicon-book"></span> 字典类型</a></li>
+                <li class="liClass"><a href="settings/dictionary/type/toIndex.do" target="workareaFrame"><span
+                        class="glyphicon glyphicon-book"></span> 字典类型</a></li>
 				<li class="liClass"><a href="value/index.html" target="workareaFrame"><span class="glyphicon glyphicon-list"></span> 字典值</a></li>
 			</ul>
 			
