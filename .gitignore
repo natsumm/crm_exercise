@@ -3,8 +3,10 @@
 .idea
 *.iml
 */*.iml
+# 测试包
+*/src/test/
 
-#  编译目录
+# 编译目录
 out
 */out/
 gen

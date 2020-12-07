@@ -1,7 +1,9 @@
 package com.bjming.crm.settings.mapper;
 
 import com.bjming.crm.settings.domain.User;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserMapper {
@@ -59,4 +61,12 @@ public interface UserMapper {
      * @return user
      */
     User selectUserByActAndPwd(Map<String, Object> map);
+
+    /**
+     * 查询表中所有可用的用户
+     *      未被锁定, 且在有效时间内
+     * @param expireTime 有效时间
+     * @param notLockState 未被锁定的标记
+     */
+    List<User> selectAllAvailableUsers(@Param("expireTime") String expireTime, @Param("notLockState") String notLockState);
 }
