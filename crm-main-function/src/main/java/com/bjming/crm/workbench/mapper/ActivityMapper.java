@@ -54,6 +54,7 @@ public interface ActivityMapper {
      */
     int updateByPrimaryKey(Activity record);
 
+    //--------------------------------------------------------------------------------------
     /**
      * 从实体类中插入一条记录
      */
@@ -79,4 +80,43 @@ public interface ActivityMapper {
      * @return rows
      */
     int deleteActivityByIds(String[] ids);
+
+    /**
+     * 根据主键值查询活动记录
+     *
+     * @param id
+     * @return
+     */
+    Activity selectActivityById(String id);
+
+    /**
+     * 从实体类中更新一条记录
+     *
+     * @param activity
+     * @return
+     */
+    int updateActivity(Activity activity);
+
+    /**
+     * 查询表中所有的市场活动记录, 外键字段使用连接查询;
+     *
+     * @return
+     */
+    List<Activity> selectAllActivityForDetail();
+
+    /**
+     * 根据id数组查询多条市场活动记录;
+     *
+     * @param ids
+     * @return
+     */
+    List<Activity> selectActivityByIds(String[] ids);
+
+    /**
+     * 从集合中插入多条市场活动记录
+     *
+     * @param list activityList
+     * @return rows
+     */
+    int insertActivitiesByList(List<Activity> list);
 }

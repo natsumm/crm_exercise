@@ -98,7 +98,10 @@
             });
             //页面加载完毕, 显示所有数据的第一页, 默认每页显示10条数据
             queryActivityByConditionForPage(1, 10);
-
+            //用户在市场活动主页面填写查询条件,点击"查询"按钮,显示所有符合条件的数据的第一页，保持每页显示条数不变;
+            $("#queryActivityBtn").click(function () {
+                queryActivityByConditionForPage(1, $("#pagination").bs_pagination("getOption", "rowsPerPage"));
+            });
             //"删除"市场活动按钮单击事件
             $("#deleteActivityBtn").click(function () {
                 var $checkedDom = $("#queryActivityResTbody input[type='checkbox']:checked");
@@ -130,6 +133,166 @@
                         }
                     }
                 });
+            });
+
+            //"修改"按钮的单击事件: 从表中查询一条记录, 弹出模态窗口
+            $("#editActivityBtn").click(function () {
+                var $checkedDom = $("#queryActivityResTbody input[type='checkbox']:checked");
+                if ($checkedDom.size() == 0) {
+                    alert("请选中一条记录进行修改");
+                    return;
+                }
+                if ($checkedDom.size() > 1) {
+                    alert("每次只能修改一条记录");
+                    return;
+                }
+                var activityId = $checkedDom.val();
+                $.ajax({
+                    url: "workbench/activity/queryActivityById.do",
+                    data: {
+                        id: activityId
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        //接收到相应信息, 直接赋值给模态窗口中
+                        $("#edit-id").val(resp.id); //隐藏域
+                        $("#edit-owner").val(resp.owner);
+                        $("#edit-name").val(resp.name);
+                        $("#edit-startDate").val(resp.startDate);
+                        $("#edit-endDate").val(resp.endDate);
+                        $("#edit-cost").val(resp.cost);
+                        $("#edit-description").val(resp.description);
+                        //弹出模态窗口
+                        $("#editActivityModal").modal("show");
+
+                    }
+                });
+            });
+            //修改窗口的"更新"按钮单击事件
+            $("#updateActivityBtn").click(function () {
+                var id = $.trim($("#edit-id").val());
+                var owner = $.trim($("#edit-owner").val());
+                var name = $.trim($("#edit-name").val());
+                var startDate = $.trim($("#edit-startDate").val());
+                var endDate = $.trim($("#edit-endDate").val());
+                var cost = $.trim($("#edit-cost").val());
+                var description = $.trim($("#edit-description").val());
+                /**
+                 * 表单验证, 条件与创建时相同;
+                 */
+                if (owner == "") {
+                    alert("所有者不能为空");
+                    return;
+                }
+                if (name == "") {
+                    alert("名称不能为空");
+                    return;
+                }
+                if (startDate != "" && endDate != "" && startDate > endDate) {
+                    alert("开始日期不能晚于结束日期");
+                    return;
+                }
+                if (!/^(([1-9]\d*)|0)$/.test(cost)) {
+                    alert("成本只能是非负整数");
+                    return;
+                }
+                $.ajax({
+                    url: "workbench/activity/saveEditActivity.do",
+                    data: {
+                        id: id,
+                        owner: owner,
+                        name: name,
+                        startDate: startDate,
+                        endDate: endDate,
+                        cost: cost,
+                        description: description
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        if (resp.code == "1") {
+                            //修改成功之后,关闭模态窗口,刷新市场活动列表,保持页号和每页显示条数都不变
+                            $("#editActivityModal").modal("hide");
+                            queryActivityByConditionForPage($("#pagination").bs_pagination("getOption", "currentPage"),
+                                $("#pagination").bs_pagination("getOption", "rowsPerPage"))
+                        } else {
+                            //修改失败,提示信息,模态窗口不关闭,列表也不刷新
+                            alert(resp.msg);
+                            $("#editActivityModal").modal("show");
+                        }
+                    }
+                });
+            });
+
+            //"批量导出"单击事件
+            $("#exportActivityAllBtn").click(function () {
+                //文件下载的请求必须是: 浏览器发送到同步请求, ajax不能处理文件 即使是同步请求, 页面也不会刷新;
+                window.location.href = "workbench/activity/exportAllActivity.do";
+            });
+
+            //"选择导出"单击事件
+            $("#exportActivityXzBtn").click(function () {
+                var $checkedDom = $("#queryActivityResTbody input[type='checkbox']:checked");
+                //表单验证
+                if ($checkedDom.size() == 0) {
+                    alert("至少选择一条记录导出");
+                    return;
+                }
+                var param = "";
+                $checkedDom.each(function () {
+                    param += "id=" + this.value + "&";
+                });
+                param = param.substr(0, param.length - 1);
+                alert("===准备发送请求==");
+                window.location.href = "workbench/activity/exportActivitySelective.do?" + param;
+            });
+
+            //导入市场活动模态窗口"导入"按钮单击事件
+            $("#importActivityBtn").click(function () {
+                //获取文件名
+                var activityFile = $("#activityFile").val();
+                if (activityFile == "") {
+                    alert("请选择文件后上传");
+                    return;
+                }
+                //只支持.xls
+                var fileSuffix = activityFile.substr(activityFile.lastIndexOf(".") + 1).toLowerCase();
+                if (fileSuffix != "xls") {
+                    alert("只支持.xls文件, 请检查");
+                    return;
+                }
+                //文件大小不超过5MB
+                var file = $("#activityFile")[0].files[0];
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("文件大小不能超过5MB");
+                    return;
+                }
+                var formData = new FormData();
+                formData.append("activityFile", file);
+
+                $.ajax({
+                    url: "workbench/activity/importActivity.do",
+                    data: formData,
+                    type: "post",
+                    dataType: "json",
+                    processData: false,
+                    contentType: false,
+                    success: function (resp) {
+                        if (resp.code == "1") {
+                            //导入成功之后,提示成功导入记录条数,关闭模态窗口,刷新市场活动列表,显示第一页数据,保持每页显示条数不变
+                            alert("成功导入 " + resp.retData + " 条记录");
+                            $("#importActivityModal").modal("hide");
+                            $("#activityFile").val("");
+                            queryActivityByConditionForPage(1, $("#pagination").bs_pagination("getOption", "rowsPerPage"));
+                        } else {
+                            //导入失败,提示信息,模态窗口不关闭,列表也不刷新
+                            alert(resp.msg);
+                            $("#importActivityModal").modal("show");
+                        }
+                    }
+                });
+
             });
         });
 
@@ -282,7 +445,7 @@
             <div class="modal-body">
 
                 <form class="form-horizontal" role="form">
-
+                    <input type="hidden" id="edit-id"/>
                     <div class="form-group">
                         <label for="edit-owner" class="col-sm-2 control-label">所有者<span
                                 style="font-size: 15px; color: red;">*</span></label>
@@ -332,7 +495,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+                <button type="button" class="btn btn-primary" id="updateActivityBtn">更新</button>
             </div>
         </div>
     </div>
@@ -429,7 +592,7 @@
                 <button type="button" class="btn btn-primary" id="createActivityBtn">
                     <span class="glyphicon glyphicon-plus"></span> 创建
                 </button>
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span
+                <button type="button" class="btn btn-default" id="editActivityBtn"><span
                         class="glyphicon glyphicon-pencil"></span> 修改
                 </button>
                 <button type="button" class="btn btn-danger" id="deleteActivityBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>

@@ -18,6 +18,15 @@ public class DateFormatUtils {
     }
 
     /**
+     * 获取当前系统时间的yyyyMMddHHmmss格式的时间戳
+     *
+     * @return
+     */
+    public static String getSysDateTimeStamp() {
+        return getDateTimeStamp(new Date());
+    }
+
+    /**
      * yyyy-MM-dd HH:mm:ss
      */
     public static String getDateTime(Date date){
