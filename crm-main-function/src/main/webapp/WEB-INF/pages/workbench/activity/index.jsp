@@ -322,7 +322,7 @@
                     $.each(resp.activityList, function () {
                         htmlStr += "<tr class=\"active\">";
                         htmlStr += "<td><input type=\"checkbox\" value=\"" + this.id + "\"/></td>";
-                        htmlStr += "<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">" + this.name + "</a></td>";
+                        htmlStr += "<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='workbench/activity/toDetail.do?id=" + this.id + "'\">" + this.name + "</a></td>";
                         htmlStr += "<td>" + this.owner + "</td>";
                         htmlStr += "<td>" + this.startDate + "</td>";
                         htmlStr += "<td>" + this.endDate + "</td>";
@@ -624,7 +624,7 @@
                 <%--<tr class="active">
                     <td><input type="checkbox"/></td>
                     <td><a style="text-decoration: none; cursor: pointer;"
-                           onclick="window.location.href='detail.html';">发传单</a></td>
+                           onclick="window.location.href='detdetail.jsp>发传单</a></td>
                     <td>zhangsan</td>
                     <td>2020-10-10</td>
                     <td>2020-10-20</td>

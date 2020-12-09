@@ -119,4 +119,12 @@ public interface ActivityMapper {
      * @return rows
      */
     int insertActivitiesByList(List<Activity> list);
+
+    /**
+     * 根据主键字段查询一条市场活动记录
+     *
+     * @param id id
+     * @return activity
+     */
+    Activity selectActivityForDetailById(String id);
 }

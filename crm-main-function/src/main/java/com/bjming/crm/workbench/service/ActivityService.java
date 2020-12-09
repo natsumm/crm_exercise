@@ -56,6 +56,14 @@ public interface ActivityService {
      * @return rows
      */
     int saveCreateActivityByList(List<Activity> activityList);
+
+    /**
+     * 根据主键字段查询一条市场活动记录
+     *
+     * @param id id
+     * @return activity
+     */
+    Activity queryActivityForDetailById(String id);
 }
 
 

@@ -8,6 +8,7 @@ import com.bjming.crm.commons.utils.UUIDUtils;
 import com.bjming.crm.settings.domain.User;
 import com.bjming.crm.settings.service.UserService;
 import com.bjming.crm.workbench.domain.Activity;
+import com.bjming.crm.workbench.service.ActivityRemarkService;
 import com.bjming.crm.workbench.service.ActivityService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,8 +38,12 @@ import java.util.Map;
 public class ActivityController {
     @Autowired
     private UserService userService;
+
     @Autowired
     private ActivityService activityService;
+
+    @Autowired
+    private ActivityRemarkService activityRemarkService;
 
     @RequestMapping("/workbench/activity/toIndex.do")
     public String toIndex(Model model) {
@@ -188,6 +194,14 @@ public class ActivityController {
         return returnObject;
     }
 
+    @RequestMapping("/workbench/activity/toDetail.do")
+    public ModelAndView toDetail(String id) { //跳转到市场活动明细页面
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("activity", activityService.queryActivityForDetailById(id));
+        mv.addObject("activityRemarkList", activityRemarkService.queryActivityRemarkForDetailByActivityId(id));
+        mv.setViewName("workbench/activity/detail");
+        return mv;
+    }
 }
 
 

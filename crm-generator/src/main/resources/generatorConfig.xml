@@ -153,7 +153,7 @@
                        enableDeleteByExample="false" enableSelectByExample="false"
                        selectByExampleQueryId="false">
                 </table>
-                 -->
+
 
         <table tableName="tbl_transaction" domainObjectName="Transaction"
                enableCountByExample="false" enableUpdateByExample="false"
@@ -170,6 +170,6 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
         </table>
-
+-->
     </context>
 </generatorConfiguration>
