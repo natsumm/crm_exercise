@@ -83,19 +83,19 @@
                                enableDeleteByExample="false" enableSelectByExample="false"
                                selectByExampleQueryId="false">
                         </table>
-
+-->
                         <table tableName="tbl_clue_activity_relation" domainObjectName="ClueActivityRelation"
                                enableCountByExample="false" enableUpdateByExample="false"
                                enableDeleteByExample="false" enableSelectByExample="false"
                                selectByExampleQueryId="false">
                         </table>
-
-                        <table tableName="tbl_clue_remark" domainObjectName="ClueRemark"
-                               enableCountByExample="false" enableUpdateByExample="false"
-                               enableDeleteByExample="false" enableSelectByExample="false"
-                               selectByExampleQueryId="false">
-                        </table>
-                        -->
+        <!--
+                                <table tableName="tbl_clue_remark" domainObjectName="ClueRemark"
+                                       enableCountByExample="false" enableUpdateByExample="false"
+                                       enableDeleteByExample="false" enableSelectByExample="false"
+                                       selectByExampleQueryId="false">
+                                </table>
+        -->
         <!--
         <table tableName="tbl_contacts" domainObjectName="Contacts"
                enableCountByExample="false" enableUpdateByExample="false"
@@ -127,14 +127,14 @@
         </table>
         -->
         <!--
-                <table tableName="tbl_dictionary_type" domainObjectName="DictionaryType"
+                <table tableName="tbl_dic_type" domainObjectName="DicType"
                        enableCountByExample="false" enableUpdateByExample="false"
                        enableDeleteByExample="false" enableSelectByExample="false"
                        selectByExampleQueryId="false">
                 </table>
 
 
-                <table tableName="tbl_dictionary_value" domainObjectName="DictionaryValue"
+                <table tableName="tbl_dic_value" domainObjectName="DicValue"
                        enableCountByExample="false" enableUpdateByExample="false"
                        enableDeleteByExample="false" enableSelectByExample="false"
                        selectByExampleQueryId="false">

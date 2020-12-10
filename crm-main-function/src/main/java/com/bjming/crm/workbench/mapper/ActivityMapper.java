@@ -1,6 +1,7 @@
 package com.bjming.crm.workbench.mapper;
 
 import com.bjming.crm.workbench.domain.Activity;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -127,4 +128,29 @@ public interface ActivityMapper {
      * @return activity
      */
     Activity selectActivityForDetailById(String id);
+
+    /**
+     * 通过线索id查询关联的多条市场活动记录
+     *
+     * @param clueId
+     * @return activityList
+     */
+    List<Activity> selectActivityForDetailByClueId(String clueId);
+
+    /**
+     * 根据名称模糊查询市场活动, 并排除已经关联过的市场活动, 外键字段采用连接查询
+     *
+     * @param name
+     * @param clueId
+     * @return activityList
+     */
+    List<Activity> selectActivityForDetailByNameAndClueId(@Param("name") String name, @Param("clueId") String clueId);
+
+    /**
+     * 从id数组中查询多条市场记录, 外键字段采用连接查询
+     *
+     * @param ids
+     * @return
+     */
+    List<Activity> selectActivityForDetailByIds(String[] ids);
 }

@@ -130,4 +130,11 @@
         type_code = #{typeCode,jdbcType=VARCHAR}
         where id = #{id,jdbcType=CHAR}
     </update>
+
+    <select id="selectDicValuesByTypeCode" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_dic_value
+        where type_code=#{typeCode}
+    </select>
 </mapper>

@@ -64,6 +64,25 @@ public interface ActivityService {
      * @return activity
      */
     Activity queryActivityForDetailById(String id);
+
+    /**
+     * 根据线索主键字段, 查询关联的多条市场活动记录
+     *
+     * @param clueId
+     * @return activityList
+     */
+    List<Activity> queryActivityForDetailByClueId(String clueId);
+
+    /**
+     * 根据名称模糊查询市场活动, 并排除已经关联的市场活动, 外见字段采用连接查询
+     *
+     * @param name
+     * @param clueId
+     * @return
+     */
+    List<Activity> queryActivityForDetailByNameAndClueId(String name, String clueId);
+
+    List<Activity> queryActivityForDetailByIds(String[] ids);
 }
 
 
