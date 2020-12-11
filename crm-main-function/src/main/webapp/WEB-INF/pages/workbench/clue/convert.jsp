@@ -29,6 +29,53 @@
                     $("#create-transaction2").hide(200);
                 }
             });
+
+            //"搜索"市场活动a标签的单击事件 --> 初始化完成后, 弹出模态窗口
+            $("#queryActivityA").click(function () {
+                //初始化, 清空输入框和市场活动列表
+                $("#queryActivityName").val("");
+                $("#queryActivityResTbody").empty();
+                //弹出模态窗口
+                $("#searchActivityModal").modal("show");
+            });
+            //搜索市场活动模态窗口, 搜索框键盘弹起单击事件
+            $("#queryActivityName").keyup(function () {
+                var activityName = this.value;
+                var clueId = "${clue.id}";
+                $.ajax({
+                    url: "workbench/clue/queryActivityForConvertByNameAndClueId.do",
+                    data: {
+                        name: activityName,
+                        clueId: clueId
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        var htmlStr = "";
+                        //遍历json数组
+                        $.each(resp, function () {
+                            htmlStr += "<tr>"; //这里希望这个单选按钮携带两个数据, 一个赋值给value属性, 一个赋值给自定义属性
+                            htmlStr += "<td><input type=\"radio\" name=\"activity\" value=\"" + this.id + "\" activityName=\"" + this.name + "\"/></td>";
+                            htmlStr += "<td>" + this.name + "</td>";
+                            htmlStr += "<td>" + this.startDate + "</td>";
+                            htmlStr += "<td>" + this.endDate + "</td>";
+                            htmlStr += "<td>" + this.owner + "</td>";
+                            htmlStr += "</tr>";
+                        });
+                        $("#queryActivityResTbody").html(htmlStr);
+                    }
+                });
+            });
+
+            //搜索市场活动模态窗口的 radio单击事件 --> 关闭模态窗口, 将选中的一条市场活动添加到文本框中
+            $("#queryActivityResTbody").on("click", "input[type='radio']", function () {
+                var activityId = this.value;
+                var activityName = $(this).attr("activityName");
+                //id放入隐藏域, 名称放入输入框
+                $("#activityId").val(activityId);
+                $("#activityName").val(activityName);
+                $("#searchActivityModal").modal("hide");
+            });
         });
     </script>
 
@@ -49,7 +96,7 @@
                 <div class="btn-group" style="position: relative; top: 18%; left: 8px;">
                     <form class="form-inline" role="form">
                         <div class="form-group has-feedback">
-                            <input type="text" class="form-control" style="width: 300px;"
+                            <input type="text" id="queryActivityName" class="form-control" style="width: 300px;"
                                    placeholder="请输入市场活动名称，支持模糊查询">
                             <span class="glyphicon glyphicon-search form-control-feedback"></span>
                         </div>
@@ -66,21 +113,14 @@
                         <td></td>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
+                    <tbody id="queryActivityResTbody">
+                    <%--<tr>
                         <td><input type="radio" name="activity"/></td>
                         <td>发传单</td>
                         <td>2020-10-10</td>
                         <td>2020-10-20</td>
                         <td>zhangsan</td>
-                    </tr>
-                    <tr>
-                        <td><input type="radio" name="activity"/></td>
-                        <td>发传单</td>
-                        <td>2020-10-10</td>
-                        <td>2020-10-20</td>
-                        <td>zhangsan</td>
-                    </tr>
+                    </tr>--%>
                     </tbody>
                 </table>
             </div>
@@ -129,10 +169,12 @@
             </select>
         </div>
         <div class="form-group" style="width: 400px;position: relative; left: 20px;">
-            <label for="activity">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" data-toggle="modal"
-                                                      data-target="#searchActivityModal" style="text-decoration: none;"><span
+
+            <label for="activityName">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" id="queryActivityA"
+                                                          style="text-decoration: none;"><span
                     class="glyphicon glyphicon-search"></span></a></label>
-            <input type="text" class="form-control" id="activity" placeholder="点击上面搜索" readonly>
+            <input type="hidden" id="activityId">
+            <input type="text" class="form-control" id="activityName" placeholder="点击上面搜索" readonly>
         </div>
     </form>
 
