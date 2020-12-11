@@ -76,6 +76,51 @@
                 $("#activityName").val(activityName);
                 $("#searchActivityModal").modal("hide");
             });
+
+            //线索转换按钮的单击事件
+            $("#saveConvertClueBtn").click(function () {
+                //收集参数
+                var clueId="${clue.id}";
+                var money=$.trim($("#amountOfMoney").val());
+                var tranName=$.trim($("#tradeName").val());
+                var expectedDate=$("#expectedClosingDate").val();
+                var stage=$("#stage").val();
+                var activityId=$("#activityId").val();
+                var isCreateTran=$("#isCreateTransaction").prop("checked");
+                //表单验证
+                if(isCreateTran==true) {
+                    if (!/^\d+$ 或 ^[1-9]\d*|0$/.test(money)) {
+                        alert("交易金额只能是非负整数");
+                        return;
+                    }
+                    if(tranName==""){
+                        alert("交易名称不能为空");
+                        return;
+                    }
+                }
+                $.ajax({
+                    url:"workbench/clue/saveConvertClue.do",
+                    data:{
+                        clueId:clueId,
+                        isCreateTran:isCreateTran,
+                        money:money,
+                        name: tranName,
+                        expectedDate:expectedDate,
+                        stage:stage,
+                        activityId:activityId
+                    },
+                    type:"post",
+                    dataType:"json",
+                    success:function (resp) {
+                        if(resp.code=="1"){
+                            alert("转换成功, 暂定");
+                            //window.location.href="workbench/clue/toIndex.do";
+                        }else{
+                            alert(resp.msg);
+                        }
+                    }
+                });
+            });
         });
     </script>
 
@@ -185,7 +230,7 @@
     <b>${clue.owner}</b>
 </div>
 <div id="operation" style="position: relative; left: 40px; height: 35px; top: 100px;">
-    <input class="btn btn-primary" type="button" value="转换">
+    <input class="btn btn-primary" id="saveConvertClueBtn" type="button" value="转换">
     &nbsp;&nbsp;&nbsp;&nbsp;
     <input class="btn btn-default" type="button" value="取消">
 </div>

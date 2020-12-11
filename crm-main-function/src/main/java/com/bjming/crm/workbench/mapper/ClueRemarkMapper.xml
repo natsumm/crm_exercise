@@ -193,4 +193,11 @@
         set note_content=#{noteContent}, edit_by=#{editBy}, edit_time=#{editTime}, edit_flag=#{editFlag}
         where id=#{id}
     </update>
+
+    <select id="selectClueRemarkForConvertByClueId" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_clue_remark
+        where clue_id=#{clueId}
+    </select>
 </mapper>

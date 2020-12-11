@@ -23,6 +23,8 @@ public interface ClueService {
     Clue queryClueById(String id);
 
     int saveEditClue(Clue clue);
+
+    void saveConvertClue(Map<String, Object> map) throws Exception;
 }
 
 

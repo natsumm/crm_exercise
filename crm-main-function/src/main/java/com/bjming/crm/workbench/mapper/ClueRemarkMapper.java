@@ -82,4 +82,11 @@ public interface ClueRemarkMapper {
      * @return
      */
     int updateClueRemark(ClueRemark remark);
+
+    /**
+     * 根据线索id查询多条线索备注, 外键字段查询值
+     * @param clueId
+     * @return
+     */
+    List<ClueRemark> selectClueRemarkForConvertByClueId(String clueId);
 }

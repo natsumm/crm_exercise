@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -201,6 +202,27 @@ public class ClueController {
     @ResponseBody
     public Object queryActivityForConvertByNameAndClueId(String name, String clueId) {
         return activityService.queryActivityForConvertByNameAndClueId(name, clueId);
+    }
+
+    @RequestMapping("/workbench/clue/saveConvertClue.do")
+    @ResponseBody
+    public Object saveConvertClue(String clueId, String isCreateTran /*交易对象类型的形参*/, HttpSession session){
+        ReturnObject returnObject=null;
+
+        //封装参数
+        Map<String, Object> map=new HashMap<>();
+        map.put("clueId", clueId);
+        map.put("isCreateTran",isCreateTran);
+        map.put(MyConstants.SESSION_USER,session.getAttribute(MyConstants.SESSION_USER));
+        //此处之后会把交易类型的形参放入
+        try {
+            clueService.saveConvertClue(map);
+            returnObject=ReturnObject.getSuccessReturnObject();
+        }catch(Exception e){
+            e.printStackTrace();
+            returnObject=ReturnObject.getFailReturnObject();
+        }
+        return returnObject;
     }
 }
 
