@@ -196,6 +196,12 @@ public class ClueController {
         }
         return returnObject;
     }
+
+    @RequestMapping("/workbench/clue/queryActivityForConvertByNameAndClueId.do")
+    @ResponseBody
+    public Object queryActivityForConvertByNameAndClueId(String name, String clueId) {
+        return activityService.queryActivityForConvertByNameAndClueId(name, clueId);
+    }
 }
 
 
