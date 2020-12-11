@@ -153,4 +153,13 @@ public interface ActivityMapper {
      * @return
      */
     List<Activity> selectActivityForDetailByIds(String[] ids);
+
+    /**
+     * 根据名称模糊查询市场活动, 并查询关联过的市场活动, 外键字段采用连接查询
+     *
+     * @param name
+     * @param clueId
+     * @return
+     */
+    List<Activity> selectActivityForConvertByNameAndClueId(@Param("name") String name, @Param("clueId") String clueId);
 }
