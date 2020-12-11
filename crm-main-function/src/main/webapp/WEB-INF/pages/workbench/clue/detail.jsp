@@ -36,20 +36,23 @@
                 $("#remarkDiv").css("height", "90px");
                 cancelAndSaveBtnDefault = true;
             });
-
-            $(".remarkDiv").mouseover(function () {
+            // $(".remarkDiv").mouseover(function () {
+            $("#queryRemarkListDiv").on("mouseover", ".remarkDiv", function () {
                 $(this).children("div").children("div").show();
             });
 
-            $(".remarkDiv").mouseout(function () {
+            //$(".remarkDiv").mouseout(function () {
+            $("#queryRemarkListDiv").on("mouseout", ".remarkDiv", function () {
                 $(this).children("div").children("div").hide();
             });
 
-            $(".myHref").mouseover(function () {
+            //$(".myHref").mouseover(function () {
+            $("#queryRemarkListDiv").on("mouseover", ".myHref", function () {
                 $(this).children("span").css("color", "red");
             });
 
-            $(".myHref").mouseout(function () {
+            //$(".myHref").mouseout(function () {
+            $("#queryRemarkListDiv").on("mouseout", ".myHref", function () {
                 $(this).children("span").css("color", "#E6E6E6");
             });
 
@@ -167,6 +170,118 @@
                     }
                 });
             });
+
+            //备注的"保存"按钮单击事件, --> 表单验证后, 发送请求
+            $("#saveCreateRemarkBtn").click(function () {
+                var noteContent = $.trim($("#remark").val());
+                var clueId = "${clue.id}";
+                if (noteContent == "") {
+                    alert("备注内容不能为空");
+                    return;
+                }
+
+                $.ajax({
+                    url: "workbench/clue/saveCreateClueRemark.do",
+                    data: {
+                        noteContent: noteContent,
+                        clueId: clueId
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        if (resp.code == "1") {
+                            //添加成功之后,清空输入框,刷新备注列表
+                            $("#remark").val("");
+                            var htmlStr = "";
+                            htmlStr += "<div class=\"remarkDiv\" id=\"div_" + resp.retData.id + "\" style=\"height: 60px;\">";
+                            htmlStr += "<img title=\"${sessionUser.name}\" src=\"image/user-thumbnail.png\" style=\"width: 30px; height:30px;\">";
+                            htmlStr += "<div style=\"position: relative; top: -40px; left: 40px;\">";
+                            htmlStr += "<h5>" + noteContent + "</h5>";
+                            htmlStr += "<font color=\"gray\">线索</font> <font color=\"gray\">-</font> <b>${clue.fullname}${clue.appellation}-${clue.company}</b>";
+                            htmlStr += "<small style=\"color: gray;\"> " + resp.retData.createTime + " 由${sessionUser.name}创建</small>";
+                            htmlStr += "<div style=\"position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;\">";
+                            htmlStr += "<a class=\"myHref\" name=\"editRemarkA\" remarkId=\"" + resp.retData.id + "\" href=\"javascript:void(0);\"><span class=\"glyphicon glyphicon-edit\"";
+                            htmlStr += " style=\"font-size: 20px; color: #E6E6E6;\"></span></a>";
+                            htmlStr += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                            htmlStr += "<a class=\"myHref\" name=\"deleteRemarkA\" remarkId=\"" + resp.retData.id + "\" href=\"javascript:void(0);\"><span class=\"glyphicon glyphicon-remove\"";
+                            htmlStr += " style=\"font-size: 20px; color: #E6E6E6;\"></span></a>";
+                            htmlStr += "</div>";
+                            htmlStr += "</div>";
+                            htmlStr += "</div>";
+                            $("#remarkDiv").before(htmlStr);
+                        } else {
+                            //添加失败,提示信息,输入框不清空,列表也不刷新
+                            alert(resp.msg);
+                        }
+                    }
+                });
+            });
+
+            //"删除备注"图标单击事件
+            $("#queryRemarkListDiv").on("click", "a[name='deleteRemarkA']", function () {
+                var remarkId = $(this).attr("remarkId");
+                $.ajax({
+                    url: "workbench/clue/deleteClueRemarkById.do",
+                    data: {
+                        remarkId: remarkId
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        if (resp.code == "1") {
+                            //删除成功之后,刷新备注列表
+                            $("#div_" + remarkId).remove();
+                        } else {
+                            //删除失败,提示信息,备注列表不刷新
+                            alert(resp.msg);
+                        }
+                    }
+                });
+            });
+
+            //"修改备注"图标单击事件, -->remarkId放入隐藏域, noteContent放入输入框, 弹出模态窗口
+            $("#queryRemarkListDiv").on("click", "a[name='editRemarkA']", function () {
+                var remarkId = $(this).attr("remarkId");
+                var noteContent = $("#div_" + remarkId + " h5").html();
+                //remarkId放入隐藏域, noteContent放入输入框
+                $("#remarkId").val(remarkId);
+                $("#edit-noteContent").val(noteContent);
+                $("#editRemarkModal").modal("show");
+            });
+
+            //修改备注模态创库"更新"按钮的单击事件-->表单验证, 发起请求, 接收响应
+            $("#updateRemarkBtn").click(function () {
+                //收集参数
+                var remarkId = $("#remarkId").val();
+                var noteContent = $.trim($("#edit-noteContent").val());
+                if (noteContent == "") {
+                    alert("备注内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    url: "workbench/clue/saveEditClueRemark.do",
+                    data: {
+                        id: remarkId,
+                        noteContent: noteContent
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        if (resp.code == "1") {
+                            //删除成功之后,刷新备注列表
+                            //关闭模态窗口
+                            $("#editRemarkModal").modal("hide");
+                            //更新被修改记录的 noteContent, editTime, editBy
+                            $("#div_" + remarkId + " h5").html(noteContent);
+                            $("#div_" + remarkId + " small").html(resp.retData.editTime + " 由${sessionUser.name}修改");
+                        } else {
+                            //删除失败,提示信息,备注列表不刷新
+                            alert(resp.msg);
+                            $("#editRemarkModal").modal("show");
+                        }
+                    }
+                });
+            });
         });
 
     </script>
@@ -224,6 +339,35 @@
     </div>
 </div>
 
+<!-- 修改线索备注的模态窗口 -->
+<div class="modal fade" id="editRemarkModal" role="dialog">
+    <%-- 备注的id --%>
+    <input type="hidden" id="remarkId">
+    <div class="modal-dialog" role="document" style="width: 40%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">修改备注</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="edit-noteContent" class="col-sm-2 control-label">内容</label>
+                        <div class="col-sm-10" style="width: 81%;">
+                            <textarea class="form-control" rows="3" id="edit-noteContent"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- 返回按钮 -->
 <div style="position: relative; top: 35px; left: 10px;">
@@ -337,7 +481,7 @@
 </div>
 
 <!-- 备注 -->
-<div style="position: relative; top: 40px; left: 40px;">
+<div style="position: relative; top: 40px; left: 40px;" id="queryRemarkListDiv">
     <div class="page-header">
         <h4>备注</h4>
     </div>
@@ -360,7 +504,7 @@
     </div>--%>
 
     <c:forEach items="${clueRemarkList}" var="remark">
-        <div class="remarkDiv" style="height: 60px;">
+        <div class="remarkDiv" style="height: 60px;" id="div_${remark.id}">
             <img title="${remark.createBy}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
             <div style="position: relative; top: -40px; left: 40px;" id="div_${remark.id}">
                 <h5>${remark.noteContent}</h5>
@@ -389,7 +533,7 @@
                       placeholder="添加备注..."></textarea>
             <p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
                 <button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-                <button type="button" class="btn btn-primary">保存</button>
+                <button type="button" id="saveCreateRemarkBtn" class="btn btn-primary">保存</button>
             </p>
         </form>
     </div>

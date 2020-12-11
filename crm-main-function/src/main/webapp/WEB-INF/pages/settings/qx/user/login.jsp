@@ -44,7 +44,7 @@
                             $("#msg").html(resp.msg);
                         }
                     },
-                    before: function () {
+                    beforeSend: function () {
                         $("#msg").html("正在努力验证...");
                     }
                 });

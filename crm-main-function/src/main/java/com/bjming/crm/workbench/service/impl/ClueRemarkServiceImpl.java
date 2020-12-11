@@ -20,6 +20,21 @@ public class ClueRemarkServiceImpl implements ClueRemarkService {
     public List<ClueRemark> queryClueRemarkForDetailByClueId(String clueId) {
         return clueRemarkMapper.selectClueRemarkForDetailByClueId(clueId);
     }
+
+    @Override
+    public int saveCreateClueRemark(ClueRemark remark) {
+        return clueRemarkMapper.insertClueRemark(remark);
+    }
+
+    @Override
+    public int deleteClueRemarkById(String id) {
+        return clueRemarkMapper.deleteClueRemarkById(id);
+    }
+
+    @Override
+    public int saveEditClueRemark(ClueRemark remark) {
+        return clueRemarkMapper.updateClueRemark(remark);
+    }
 }
 
 

@@ -61,4 +61,25 @@ public interface ClueRemarkMapper {
      * @return clueRemarkList
      */
     List<ClueRemark> selectClueRemarkForDetailByClueId(String clueId);
+
+    /**
+     * 从实体类中插入一条记录
+     */
+    int insertClueRemark(ClueRemark remark);
+
+    /**
+     * 根据id删除一条线索备注
+     *
+     * @param id
+     * @return
+     */
+    int deleteClueRemarkById(String id);
+
+    /**
+     * 从实体类更新一条记录
+     *
+     * @param remark
+     * @return
+     */
+    int updateClueRemark(ClueRemark remark);
 }

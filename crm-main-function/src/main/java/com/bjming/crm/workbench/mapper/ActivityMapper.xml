@@ -328,6 +328,7 @@
     join tbl_user u2 on a.create_by=u2.id
     left join tbl_user u3 on a.edit_by=u3.id
     where r.clue_id=#{clueId}
+    order by a.create_time desc
   </select>
 
   <select id="selectActivityForDetailByNameAndClueId" parameterType="string" resultMap="BaseResultMap">
@@ -344,6 +345,7 @@
         from tbl_clue_activity_relation
         where clue_id=#{clueId}
       )
+    order by a.create_time desc
   </select>
 
   <select id="selectActivityForDetailByIds" parameterType="string" resultMap="BaseResultMap">
@@ -357,5 +359,6 @@
     <foreach collection="array" item="id" open="(" close=")" separator=",">
       #{id}
     </foreach>
+      order by a.create_time desc
   </select>
 </mapper>
