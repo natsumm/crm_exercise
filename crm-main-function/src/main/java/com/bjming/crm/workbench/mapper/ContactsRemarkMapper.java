@@ -1,8 +1,6 @@
 package com.bjming.crm.workbench.mapper;
 
 import com.bjming.crm.workbench.domain.ContactsRemark;
-import com.bjming.crm.workbench.domain.Customer;
-import com.bjming.crm.workbench.domain.CustomerRemark;
 
 import java.util.List;
 
@@ -55,4 +53,5 @@ public interface ContactsRemarkMapper {
      */
     int updateByPrimaryKey(ContactsRemark record);
 
+    int insertContactsRemarkByList(List<ContactsRemark> remarkList);
 }

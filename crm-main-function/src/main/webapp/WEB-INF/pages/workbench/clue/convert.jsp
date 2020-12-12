@@ -97,6 +97,14 @@
                         alert("交易名称不能为空");
                         return;
                     }
+                    if (expectedDate == "") {
+                        alert("预计成交日期不能为空");
+                        return;
+                    }
+                    if (stage == "") {
+                        alert("交易阶段不能为空");
+                        return;
+                    }
                 }
                 $.ajax({
                     url:"workbench/clue/saveConvertClue.do",
@@ -113,8 +121,8 @@
                     dataType:"json",
                     success:function (resp) {
                         if(resp.code=="1"){
-                            alert("转换成功, 暂定");
-                            //window.location.href="workbench/clue/toIndex.do";
+                            //alert("转换成功, 暂定");
+                            window.location.href = "workbench/clue/toIndex.do";
                         }else{
                             alert(resp.msg);
                         }

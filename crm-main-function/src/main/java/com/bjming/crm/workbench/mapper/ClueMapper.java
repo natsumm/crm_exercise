@@ -110,4 +110,12 @@ public interface ClueMapper {
      * @return
      */
     int updateClue(Clue clue);
+
+    /**
+     * 根据线索id删除一条记录
+     *
+     * @param clue
+     * @return
+     */
+    int deleteClueById(String id);
 }
