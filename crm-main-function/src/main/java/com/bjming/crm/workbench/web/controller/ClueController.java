@@ -10,6 +10,7 @@ import com.bjming.crm.settings.service.UserService;
 import com.bjming.crm.workbench.domain.Activity;
 import com.bjming.crm.workbench.domain.Clue;
 import com.bjming.crm.workbench.domain.ClueActivityRelation;
+import com.bjming.crm.workbench.domain.Tran;
 import com.bjming.crm.workbench.service.ActivityService;
 import com.bjming.crm.workbench.service.ClueActivityRelationService;
 import com.bjming.crm.workbench.service.ClueRemarkService;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -201,6 +203,27 @@ public class ClueController {
     @ResponseBody
     public Object queryActivityForConvertByNameAndClueId(String name, String clueId) {
         return activityService.queryActivityForConvertByNameAndClueId(name, clueId);
+    }
+
+    @RequestMapping("/workbench/clue/saveConvertClue.do")
+    @ResponseBody
+    public Object saveConvertClue(String clueId, String isCreateTran, Tran tran, HttpSession session) {
+        ReturnObject returnObject=null;
+
+        //封装参数
+        Map<String, Object> map=new HashMap<>();
+        map.put("clueId", clueId);
+        map.put("isCreateTran",isCreateTran);
+        map.put(MyConstants.SESSION_USER,session.getAttribute(MyConstants.SESSION_USER));
+        map.put("tran", tran);
+        try {
+            clueService.saveConvertClue(map);
+            returnObject=ReturnObject.getSuccessReturnObject();
+        }catch(Exception e){
+            e.printStackTrace();
+            returnObject=ReturnObject.getFailReturnObject();
+        }
+        return returnObject;
     }
 }
 

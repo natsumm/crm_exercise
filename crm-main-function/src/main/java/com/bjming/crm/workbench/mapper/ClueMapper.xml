@@ -446,4 +446,9 @@
       address=#{address}
     where id=#{id}
   </update>
+
+    <delete id="deleteClueById" parameterType="string">
+        delete from tbl_clue
+        where id=#{id}
+    </delete>
 </mapper>
