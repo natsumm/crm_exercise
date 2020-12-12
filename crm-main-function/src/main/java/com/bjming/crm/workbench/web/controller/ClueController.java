@@ -10,6 +10,7 @@ import com.bjming.crm.settings.service.UserService;
 import com.bjming.crm.workbench.domain.Activity;
 import com.bjming.crm.workbench.domain.Clue;
 import com.bjming.crm.workbench.domain.ClueActivityRelation;
+import com.bjming.crm.workbench.domain.Tran;
 import com.bjming.crm.workbench.service.ActivityService;
 import com.bjming.crm.workbench.service.ClueActivityRelationService;
 import com.bjming.crm.workbench.service.ClueRemarkService;
@@ -206,7 +207,7 @@ public class ClueController {
 
     @RequestMapping("/workbench/clue/saveConvertClue.do")
     @ResponseBody
-    public Object saveConvertClue(String clueId, String isCreateTran /*交易对象类型的形参*/, HttpSession session){
+    public Object saveConvertClue(String clueId, String isCreateTran, Tran tran, HttpSession session) {
         ReturnObject returnObject=null;
 
         //封装参数
@@ -214,7 +215,7 @@ public class ClueController {
         map.put("clueId", clueId);
         map.put("isCreateTran",isCreateTran);
         map.put(MyConstants.SESSION_USER,session.getAttribute(MyConstants.SESSION_USER));
-        //此处之后会把交易类型的形参放入
+        map.put("tran", tran);
         try {
             clueService.saveConvertClue(map);
             returnObject=ReturnObject.getSuccessReturnObject();

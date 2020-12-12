@@ -10,11 +10,11 @@ import com.bjming.crm.workbench.mapper.*;
 import com.bjming.crm.workbench.service.ClueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 2020/12/09 by AshenOne
@@ -31,6 +31,16 @@ public class ClueServiceImpl implements ClueService {
     private ClueRemarkMapper clueRemarkMapper;
     @Autowired
     private CustomerRemarkMapper customerRemarkMapper;
+    @Autowired
+    private ContactsRemarkMapper contactsRemarkMapper;
+    @Autowired
+    private ClueActivityRelationMapper clueActivityRelationMapper;
+    @Autowired
+    private ContactsActivityRelationMapper contactsActivityRelationMapper;
+    @Autowired
+    private TranMapper tranMapper;
+    @Autowired
+    private TranRemarkMapper tranRemarkMapper;
     @Override
     public int saveCreateClue(Clue clue) {
         return clueMapper.insertClue(clue);
@@ -70,28 +80,26 @@ public class ClueServiceImpl implements ClueService {
     @Override
     public void saveConvertClue(Map<String, Object> map) throws Exception {
         User user = (User) map.get(MyConstants.SESSION_USER);
+        String isCreateTran = (String) map.get("isCreateTran");
+        Tran tran = (Tran) map.get("tran");
         String clueId = (String) map.get("clueId");
         //1,根据id查询线索
         Clue clue = clueMapper.selectClueById(clueId);
+
         //2,生成customer对象
         Customer customer = new Customer();
-        customer.setId(UUIDUtils.getUUID());
+        ClueConvertUtils.injectAttributeValue(clue, customer);
         customer.setOwner(user.getId());
         customer.setName(clue.getCompany());
-        customer.setWebsite(clue.getWebsite());
-        customer.setPhone(clue.getPhone());
         customer.setCreateBy(user.getId());
         customer.setCreateTime(DateFormatUtils.getSysDateTime());
-        customer.setContactSummary(clue.getContactSummary());
-        customer.setNextContactTime(clue.getNextContactTime());
-        customer.setDescription(clue.getDescription());
-        customer.setAddress(clue.getAddress());
+
         //3,添加customer记录
         customerMapper.insertCustomer(customer);
 
         //4,生成contacts对象
-        Contacts contacts = (Contacts) ClueConvertUtils.injectAttributeValue(clue, Contacts.class, "customer");
-        contacts.setId(UUIDUtils.getUUID());
+        Contacts contacts = new Contacts();
+        ClueConvertUtils.injectAttributeValue(clue, contacts);
         contacts.setOwner(user.getId());
         contacts.setCreateBy(user.getId());
         contacts.setCreateTime(DateFormatUtils.getSysDateTime());
@@ -100,19 +108,89 @@ public class ClueServiceImpl implements ClueService {
         contactsMapper.insertContacts(contacts);
 
         //6,根据线索id, 查询多条线索备注
-        CustomerRemark customerRemark = null;
         List<ClueRemark> clueRemarkList = clueRemarkMapper.selectClueRemarkForConvertByClueId(clueId);
-        List<CustomerRemark> customerRemarkList=new ArrayList<>();
         if (clueRemarkList != null && clueRemarkList.size() > 0) {
+            List<CustomerRemark> customerRemarkList = new ArrayList<>();
+            List<ContactsRemark> contactsRemarkList = new ArrayList<>();
+            CustomerRemark customerRemark = null;
+            ContactsRemark contactsRemark = null;
+
             for (ClueRemark cr : clueRemarkList) {
-                customerRemark = (CustomerRemark) ClueConvertUtils.injectAttributeValue(cr, CustomerRemark.class, "customerRemark");
-                customerRemark.setId(UUIDUtils.getUUID());
+                //生成customerRemark对象, 放入集合中
+                customerRemark = new CustomerRemark();
+                ClueConvertUtils.injectAttributeValue(cr, customerRemark);
                 customerRemark.setCustomerId(customer.getId());
                 customerRemarkList.add(customerRemark);
+
+                //生成contactsRemark对象, 放入集合中
+                contactsRemark = new ContactsRemark();
+                ClueConvertUtils.injectAttributeValue(cr, contactsRemark);
+                contactsRemark.setContactsId(contacts.getId());
+                contactsRemarkList.add(contactsRemark);
+            }
+            //7,从集合中插入多条客户备注记录
+            customerRemarkMapper.insertCustomerRemarkByList(customerRemarkList);
+            //8,从集合中插入多条联系人备注
+            contactsRemarkMapper.insertContactsRemarkByList(contactsRemarkList);
+        }
+
+
+        //9,根据线索id查询多条线索-市场活动关联关系
+        List<ClueActivityRelation> clueActivityRelationList = clueActivityRelationMapper.selectClueActivityRelationByClueId(clueId);
+        if (!ObjectUtils.isEmpty(clueActivityRelationList)) {
+            ContactsActivityRelation contactsActivityRelation = null;
+            List<ContactsActivityRelation> contactsActivityRelationList = new ArrayList<>();
+            for (ClueActivityRelation car : clueActivityRelationList) {
+                //生成联系人和市场活动关联记录
+                contactsActivityRelation = new ContactsActivityRelation();
+                contactsActivityRelation.setId(UUIDUtils.getUUID());
+                contactsActivityRelation.setActivityId(car.getActivityId());
+                contactsActivityRelation.setContactsId(contacts.getId());
+                contactsActivityRelationList.add(contactsActivityRelation);
+            }
+            //10,从实体类集合中插入联系人和市场活动的关联记录
+            contactsActivityRelationMapper.insertContactsActivityRelationByList(contactsActivityRelationList);
+        }
+
+        //10,如果需要创建交易, 就向交易表中添加一条记录
+        if ("true".equals(isCreateTran)) {
+            //这里的交易不是由线索转换过来的, 而是由用户创建的所以有些字段是空的, 不能从线索中直接赋值, 直接赋空值;
+            //ClueConvertUtils.injectAttributeValue(clue, tran);
+            tran.setId(user.getId());
+            tran.setOwner(user.getId());
+            tran.setContactsId(contacts.getId());
+            tran.setCreateBy(user.getId());
+            tran.setCreateTime(DateFormatUtils.getSysDateTime());
+            tran.setCustomerId(customer.getId());
+            tranMapper.insertTran(tran);
+
+
+            //11,添加交易的备注记录
+            if (clueRemarkList != null && clueRemarkList.size() > 0) {
+                TranRemark tranRemark = null;
+                List<TranRemark> tranRemarkList = new ArrayList<>();
+                for (ClueRemark cr : clueRemarkList) {
+                    tranRemark = new TranRemark();
+                    ClueConvertUtils.injectAttributeValue(cr, tranRemark);
+                    tranRemark.setTranId(tran.getId());
+                    tranRemarkList.add(tranRemark);
+                }
+                tranRemarkMapper.insertTranRemarkByList(tranRemarkList);
             }
         }
-        //7,从集合中插入多条客户备注记录
-        customerRemarkMapper.insertCustomerRemarkByList(customerRemarkList);
+
+        //11,删除线索备注
+        if (clueRemarkList != null && clueRemarkList.size() > 0) {
+            clueRemarkMapper.deleteClueRemarkByClueId(clueId);
+        }
+
+        //12,删除线索和市场活动的关联关系
+        if (clueActivityRelationList != null && clueActivityRelationList.size() > 0) {
+            clueActivityRelationMapper.deleteClueActivityRelationByClueId(clueId);
+        }
+
+        //13,删除线索
+        clueMapper.deleteClueById(clueId);
     }
 }
 

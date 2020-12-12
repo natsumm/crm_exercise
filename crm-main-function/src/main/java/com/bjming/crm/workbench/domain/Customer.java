@@ -416,23 +416,4 @@ public class Customer {
     public void setAddress(String address) {
         this.address = address == null ? null : address.trim();
     }
-
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id='" + id + '\'' +
-                ", owner='" + owner + '\'' +
-                ", name='" + name + '\'' +
-                ", website='" + website + '\'' +
-                ", phone='" + phone + '\'' +
-                ", createBy='" + createBy + '\'' +
-                ", createTime='" + createTime + '\'' +
-                ", editBy='" + editBy + '\'' +
-                ", editTime='" + editTime + '\'' +
-                ", contactSummary='" + contactSummary + '\'' +
-                ", nextContactTime='" + nextContactTime + '\'' +
-                ", description='" + description + '\'' +
-                ", address='" + address + '\'' +
-                '}';
-    }
 }
