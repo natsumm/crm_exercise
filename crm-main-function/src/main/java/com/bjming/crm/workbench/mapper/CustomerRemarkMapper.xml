@@ -174,4 +174,13 @@
       (#{remark.id}, #{remark.noteContent}, #{remark.createBy}, #{remark.createTime}, #{remark.editBy}, #{remark.editTime}, #{remark.editFlag}, #{remark.customerId})
     </foreach>
   </insert>
+
+  <select id="selectCustomerRemarkForDetailByCustomerId" parameterType="string" resultMap="BaseResultMap">
+    select
+      c.id, c.note_content, u1.name as create_by, c.create_time, u2.name as edit_by, c.edit_time, c.edit_flag, c.customer_id
+    from tbl_customer_remark c
+    join tbl_user u1 on c.create_by=u1.id
+    left join tbl_user u2 on c.edit_by=u2.id
+    where c.customer_id=#{customerId}
+  </select>
 </mapper>

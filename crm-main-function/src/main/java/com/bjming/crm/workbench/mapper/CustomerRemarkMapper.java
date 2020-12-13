@@ -59,4 +59,12 @@ public interface CustomerRemarkMapper {
      * @return
      */
     int insertCustomerRemarkByList(List<CustomerRemark> remarkList);
+
+    /**
+     * 根据客户id查询对应的多条客户备注, 外间字段采用连接查询
+     *
+     * @param customerId
+     * @return
+     */
+    List<CustomerRemark> selectCustomerRemarkForDetailByCustomerId(String customerId);
 }

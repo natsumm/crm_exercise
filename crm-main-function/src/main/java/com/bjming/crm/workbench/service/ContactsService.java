@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface ContactsService {
     List<Contacts> queryContactsByFullName(String fullname);
+
+    List<Contacts> queryContactsForDetailByCustomerId(String customerId);
 }

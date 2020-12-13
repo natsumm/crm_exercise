@@ -7,7 +7,10 @@ import com.bjming.crm.commons.utils.UUIDUtils;
 import com.bjming.crm.settings.domain.User;
 import com.bjming.crm.settings.service.UserService;
 import com.bjming.crm.workbench.domain.Customer;
+import com.bjming.crm.workbench.service.ContactsService;
+import com.bjming.crm.workbench.service.CustomerRemarkService;
 import com.bjming.crm.workbench.service.CustomerService;
+import com.bjming.crm.workbench.service.TranService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +31,12 @@ public class CustomerController {
     private UserService userService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private CustomerRemarkService customerRemarkService;
+    @Autowired
+    private ContactsService contactsService;
+    @Autowired
+    private TranService tranService;
 
     @RequestMapping("/workbench/customer/toIndex.do")
     public ModelAndView toIndex() {
@@ -109,6 +118,17 @@ public class CustomerController {
             returnObject = ReturnObject.getFailReturnObject();
         }
         return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/toDetail.do")
+    public ModelAndView toDetail(String customerId) {
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("customer", customerService.queryCustomerForDetailById(customerId));
+        mv.addObject("customerRemarkList", customerRemarkService.queryCustomerRemarkForDetailByCustomerId(customerId));
+        mv.addObject("tranList", tranService.queryTranForDetailByCustomerId(customerId));
+        mv.addObject("contactsList", contactsService.queryContactsForDetailByCustomerId(customerId));
+        mv.setViewName("workbench/customer/detail");
+        return mv;
     }
 }
 

@@ -237,6 +237,12 @@
                     }
                 });
             });
+
+            //客户名称单击事件, 跳转明细页面
+            $("#queryCustomerResTbody").on("click", "a", function () {
+                var customerId = $(this).attr("customerId");
+                window.location.href = "workbench/customer/toDetail.do?customerId=" + customerId;
+            });
         });
 
         //通过参数来活动分页插件的当前属性;
@@ -273,7 +279,7 @@
                     $.each(resp.customerList, function () {
                         htmlStr += "<tr>";
                         htmlStr += "<td><input type=\"checkbox\" value=\"" + this.id + "\"/></td>";
-                        htmlStr += "<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">" + this.name + "</a></td>";
+                        htmlStr += "<td><a style=\"text-decoration: none; cursor: pointer;\" customerId=\"" + this.id + "\">" + this.name + "</a></td>";
                         htmlStr += "<td>" + this.owner + "</td>";
                         htmlStr += "<td>" + this.phone + "</td>";
                         htmlStr += "<td>" + this.website + "</td>";
@@ -566,7 +572,7 @@
                 <%--<tr>
                     <td><input type="checkbox"/></td>
                     <td><a style="text-decoration: none; cursor: pointer;"
-                           onclick="window.location.href='detail.html';">动力节点</a></td>
+                           onclick="window.location.href='detail.jsp';">动力节点</a></td>
                     <td>zhangsan</td>
                     <td>010-84846003</td>
                     <td>http://www.bjpowernode.com</td>

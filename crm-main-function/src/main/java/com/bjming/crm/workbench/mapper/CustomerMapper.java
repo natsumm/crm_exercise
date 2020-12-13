@@ -107,4 +107,12 @@ public interface CustomerMapper {
      * @return
      */
     int updateCustomer(Customer customer);
+
+    /**
+     * 根据id查询客户, 外键字段采用连接查询
+     *
+     * @param id
+     * @return
+     */
+    Customer selectCustomerForDetailById(String id);
 }

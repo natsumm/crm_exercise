@@ -22,4 +22,6 @@ public interface CustomerService {
     Customer queryCustomerById(String id);
 
     int saveEditCustomer(Customer customer);
+
+    Customer queryCustomerForDetailById(String id);
 }

@@ -20,6 +20,11 @@ public class ContactsServiceImpl implements ContactsService {
     public List<Contacts> queryContactsByFullName(String fullname) {
         return contactsMapper.selectContactsByFullname(fullname);
     }
+
+    @Override
+    public List<Contacts> queryContactsForDetailByCustomerId(String customerId) {
+        return contactsMapper.selectContactsForDetailByCustomerId(customerId);
+    }
 }
 
 

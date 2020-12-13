@@ -67,4 +67,12 @@ public interface ContactsMapper {
      * @return
      */
     List<Contacts> selectContactsByFullname(String fullname);
+
+    /**
+     * 根据客户id查询多条联系人记录
+     *
+     * @param customerId
+     * @return
+     */
+    List<Contacts> selectContactsForDetailByCustomerId(String customerId);
 }
