@@ -85,6 +85,8 @@ public interface ActivityService {
     List<Activity> queryActivityForDetailByIds(String[] ids);
 
     List<Activity> queryActivityForConvertByNameAndClueId(String name, String clueId);
+
+    List<Activity> queryActivityByName(String name);
 }
 
 

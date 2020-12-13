@@ -162,4 +162,12 @@ public interface ActivityMapper {
      * @return
      */
     List<Activity> selectActivityForConvertByNameAndClueId(@Param("name") String name, @Param("clueId") String clueId);
+
+    /**
+     * 根据名称模糊查询市场活动, owner使用连接查询
+     *
+     * @param name
+     * @return
+     */
+    List<Activity> selectActivityByName(String name);
 }
