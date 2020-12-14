@@ -12,12 +12,15 @@
     <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
     <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css"
           rel="stylesheet"/>
+    <link href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css" type="text/css" rel="stylesheet"/>
 
     <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
     <script type="text/javascript"
             src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+    <script type="text/javascript" src="jquery/bs_pagination-master/localization/en.js"></script>
 
     <script type="text/javascript">
 
@@ -25,7 +28,88 @@
             $("#createTranBtn").click(function () {
                 window.location.href = "workbench/transaction/toSave.do";
             });
+            //页面加载完毕查询所有数据的第一页, 默认每页显示10条
+            queryTranByConditionForPage(1, 10);
+            //点击"查询"按钮,显示所有符合条件的数据的第一页，保持每页显示条数不变
+            $("#queryTranBtn").click(function () {
+                queryTranByConditionForPage(1, $("#pagination").bs_pagination("getOption", "rowsPerPage"));
+            });
         });
+
+        //分页查询交易
+        function queryTranByConditionForPage(pageNo, pageSize) {
+            var owner = $("#query-owner").val();
+            var name = $("#query-name").val();
+            var customerName = $("#query-customerName").val();
+            var stage = $("#query-stage").val();
+            var type = $("#query-type").val();
+            var source = $("#query-source").val();
+            var contactsName = $("#query-contactsName ").val();
+            //计算起始页码
+            var beginNo = (pageNo - 1) * pageSize;
+            //发起请求
+            $.ajax({
+                url: "workbench/transaction/queryTranByConditionForPage.do",
+                data: {
+                    owner: owner,
+                    name: name,
+                    customerName: customerName,
+                    stage: stage,
+                    type: type,
+                    source: source,
+                    contactsName: contactsName,
+                    beginNo: beginNo,
+                    pageSize: pageSize
+                },
+                type: "post",
+                dataType: "json",
+                success: function (resp) {
+                    //tranList, totalRows
+                    //拼接字符串
+                    var htmlStr = "";
+                    $.each(resp.tranList, function (i, e) {
+                        htmlStr += "<tr>";
+                        htmlStr += "<td><input type=\"checkbox\" value=\"" + e.id + "\"/></td>";
+                        htmlStr += "<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.jsp';\">" + e.name + "</a></td>";
+                        htmlStr += "<td>" + e.customerId + "</td>";
+                        htmlStr += "<td>" + e.stage + "</td>";
+                        htmlStr += "<td>" + e.type + "</td>";
+                        htmlStr += "<td>" + e.owner + "</td>";
+                        htmlStr += "<td>" + e.source + "</td>";
+                        htmlStr += "<td>" + e.contactsId + "</td>";
+                        htmlStr += "</tr>";
+                    });
+                    $("#queryTranResTbody").html(htmlStr);
+                    //$("#totalRows").html(resp.totalRows);
+                    //计算总页数
+                    var totalPages = 0;
+                    if (resp.totalRows % pageSize == 0) {
+                        totalPages = resp.totalRows / pageSize;
+                    } else {
+                        totalPages = parseInt(resp.totalRows / pageSize) + 1;
+                    }
+                    //日历插件
+                    $("#pagination").bs_pagination({
+                        currentPage: pageNo,
+                        rowsPerPage: pageSize,
+                        maxRowsPerPage: 50,
+                        totalPages: totalPages,
+                        totalRows: resp.totalRows,
+
+                        visiblePageLinks: 5,
+
+                        showGoToPage: true,
+                        showRowsPerPage: true,
+                        showRowsInfo: true,
+                        showRowsDefaultInfo: true,
+
+                        onChangePage: function (event, pageObj) {
+                            queryTranByConditionForPage(pageObj.currentPage, pageObj.rowsPerPage);
+                        }
+                    });
+                }
+            });
+        }
 
     </script>
 </head>
@@ -109,11 +193,11 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">联系人名称</div>
-                        <input class="form-control" type="text">
+                        <input class="form-control" type="text" id="query-contactsName">
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-default">查询</button>
+                <button type="button" id="queryTranBtn" class="btn btn-default">查询</button>
 
             </form>
         </div>
@@ -145,8 +229,8 @@
                     <td>联系人名称</td>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
+                <tbody id="queryTranResTbody">
+                <%--<tr>
                     <td><input type="checkbox"/></td>
                     <td><a style="text-decoration: none; cursor: pointer;"
                            onclick="window.location.href='detail.jsp';">动力节点-交易01</a></td>
@@ -156,25 +240,15 @@
                     <td>zhangsan</td>
                     <td>广告</td>
                     <td>李四</td>
-                </tr>
-                <tr class="active">
-                    <td><input type="checkbox"/></td>
-                    <td><a style="text-decoration: none; cursor: pointer;"
-                           onclick="window.location.href='detail.jsp';">动力节点-交易01</a></td>
-                    <td>动力节点</td>
-                    <td>谈判/复审</td>
-                    <td>新业务</td>
-                    <td>zhangsan</td>
-                    <td>广告</td>
-                    <td>李四</td>
-                </tr>
+                </tr>--%>
                 </tbody>
             </table>
+            <div id="pagination"></div>
         </div>
 
-        <div style="height: 50px; position: relative;top: 20px;">
+        <%--<div style="height: 50px; position: relative;top: 20px;">
             <div>
-                <button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
+                <button type="button" class="btn btn-default" style="cursor: default;">共<b id="totalRows">50</b>条记录</button>
             </div>
             <div class="btn-group" style="position: relative;top: -34px; left: 110px;">
                 <button type="button" class="btn btn-default" style="cursor: default;">显示</button>
@@ -205,7 +279,7 @@
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div>--%>
 
     </div>
 

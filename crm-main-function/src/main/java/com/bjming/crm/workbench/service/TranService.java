@@ -12,6 +12,10 @@ public interface TranService {
     List<Tran> queryTranForDetailByCustomerId(String customerId);
 
     void saveCreateTran(Map<String, Object> map);
+
+    List<Tran> queryTranByConditionForPage(Map<String, Object> map);
+
+    int queryCountOfTranByCondition(Map<String, Object> map);
 }
 
 

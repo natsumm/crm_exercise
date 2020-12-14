@@ -315,4 +315,77 @@
         left join tbl_dic_value v2 on t.type=v2.id
         where t.customer_id=#{customerId}
     </select>
+
+    <!--owner, name, customerName, stage, type, source, contactsName, beginNo, pageSize-->
+    <select id="selectTranByConditionForPage" parameterType="map" resultMap="BaseResultMap">
+        select
+        t.id, u1.name as owner, t.name, c.name as customer_id, ifnull(v1.value,"") as stage,
+        ifnull(v2.value,"") as type, ifnull(v3.value,"") as source, ifnull(co.fullname,"") as contacts_id
+        from tbl_tran t
+        join tbl_user u1 on t.owner=u1.id
+        join tbl_customer c on t.customer_id=c.id
+        left join tbl_dic_value v1 on t.stage=v1.id
+        left join tbl_dic_value v2 on t.type=v2.id
+        left join tbl_dic_value v3 on t.source=v3.id
+        left join tbl_contacts co on t.contacts_id=co.id
+        <where>
+            <if test="owner!=null and owner!=''">
+                and u1.name like "%" #{owner} "%"
+            </if>
+            <if test="name!=null and name!=''">
+                and t.name like "%" #{name} "%"
+            </if>
+            <if test="customerName!=null and customerName!=''">
+                and c.name like "%" #{customerName} "%"
+            </if>
+            <if test="stage!=null and stage!=''">
+                and v1.id=#{stage}
+            </if>
+            <if test="type!=null and type!=''">
+                and v2.id=#{type}
+            </if>
+            <if test="source!=null and source!=''">
+                and v3.id=#{source}
+            </if>
+            <if test="contactsName!=null and contactsName!=''">
+                and co.fullname like "%" #{contactsName} "%"
+            </if>
+        </where>
+        order by t.create_time desc
+        limit ${beginNo}, ${pageSize}
+    </select>
+
+    <select id="selectCountOfTranByCondition" parameterType="string" resultType="_int">
+        select count(t.id)
+        from tbl_tran t
+        join tbl_user u1 on t.owner=u1.id
+        join tbl_customer c on t.customer_id=c.id
+        left join tbl_dic_value v1 on t.stage=v1.id
+        left join tbl_dic_value v2 on t.type=v2.id
+        left join tbl_dic_value v3 on t.source=v3.id
+        left join tbl_contacts co on t.contacts_id=co.id
+        <where>
+            <if test="owner!=null and owner!=''">
+                and u1.name like "%" #{owner} "%"
+            </if>
+            <if test="name!=null and name!=''">
+                and t.name like "%" #{name} "%"
+            </if>
+            <if test="customerName!=null and customerName!=''">
+                and c.name like "%" #{customerName} "%"
+            </if>
+            <if test="stage!=null and stage!=''">
+                and v1.id=#{stage}
+            </if>
+            <if test="type!=null and type!=''">
+                and v2.id=#{type}
+            </if>
+            <if test="source!=null and source!=''">
+                and v3.id=#{source}
+            </if>
+            <if test="contactsName!=null and contactsName!=''">
+                and co.fullname like "%" #{contactsName} "%"
+            </if>
+        </where>
+    </select>
 </mapper>

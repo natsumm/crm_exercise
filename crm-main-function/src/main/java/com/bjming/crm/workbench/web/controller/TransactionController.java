@@ -12,11 +12,13 @@ import com.bjming.crm.workbench.service.TranService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -112,6 +114,19 @@ public class TransactionController {
             returnObject = ReturnObject.getFailReturnObject();
         }
         return returnObject;
+    }
+
+    @RequestMapping("/workbench/transaction/queryTranByConditionForPage.do")
+    @ResponseBody
+    public Object queryTranByConditionForPage(@RequestParam Map<String, Object> map) {
+        //查询符合条件的记录以及记录的行数
+        List<Tran> tranList = tranService.queryTranByConditionForPage(map);
+        int totalRows = tranService.queryCountOfTranByCondition(map);
+        map.clear();
+        //封装响应并返回
+        map.put("tranList", tranList);
+        map.put("totalRows", totalRows);
+        return map;
     }
 }
 
