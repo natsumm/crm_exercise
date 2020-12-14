@@ -182,5 +182,24 @@
     join tbl_user u1 on c.create_by=u1.id
     left join tbl_user u2 on c.edit_by=u2.id
     where c.customer_id=#{customerId}
+    order by c.create_time asc
   </select>
+
+  <insert id="insertCustomerRemark" parameterType="com.bjming.crm.workbench.domain.CustomerRemark">
+    insert into tbl_customer_remark
+      (id, note_content, create_by, create_time, edit_flag, customer_id)
+    values
+      (#{id}, #{noteContent}, #{createBy}, #{createTime}, #{editFlag}, #{customerId})
+  </insert>
+
+  <delete id="deleteCustomerRemarkById" parameterType="string">
+    delete from tbl_customer_remark
+    where id=#{id}
+  </delete>
+
+  <update id="updateCustomerRemark" parameterType="com.bjming.crm.workbench.domain.CustomerRemark">
+    update tbl_customer_remark
+    set note_content=#{noteContent}, edit_by=#{editBy}, edit_time=#{editTime}, edit_flag=#{editFlag}
+    where id=#{id}
+  </update>
 </mapper>

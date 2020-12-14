@@ -20,6 +20,21 @@ public class CustomerRemarkServiceImpl implements CustomerRemarkService {
     public List<CustomerRemark> queryCustomerRemarkForDetailByCustomerId(String customerId) {
         return customerRemarkMapper.selectCustomerRemarkForDetailByCustomerId(customerId);
     }
+
+    @Override
+    public int saveCreateCustomerRemark(CustomerRemark remark) {
+        return customerRemarkMapper.insertCustomerRemark(remark);
+    }
+
+    @Override
+    public int deleteCustomerRemarkById(String id) {
+        return customerRemarkMapper.deleteCustomerRemarkById(id);
+    }
+
+    @Override
+    public int saveEditCustomerRemark(CustomerRemark remark) {
+        return customerRemarkMapper.updateCustomerRemark(remark);
+    }
 }
 
 

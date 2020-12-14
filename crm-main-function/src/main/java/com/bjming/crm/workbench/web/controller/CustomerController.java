@@ -7,6 +7,7 @@ import com.bjming.crm.commons.utils.UUIDUtils;
 import com.bjming.crm.settings.domain.User;
 import com.bjming.crm.settings.service.UserService;
 import com.bjming.crm.workbench.domain.Customer;
+import com.bjming.crm.workbench.domain.CustomerRemark;
 import com.bjming.crm.workbench.service.ContactsService;
 import com.bjming.crm.workbench.service.CustomerRemarkService;
 import com.bjming.crm.workbench.service.CustomerService;
@@ -129,6 +130,60 @@ public class CustomerController {
         mv.addObject("contactsList", contactsService.queryContactsForDetailByCustomerId(customerId));
         mv.setViewName("workbench/customer/detail");
         return mv;
+    }
+
+    @RequestMapping("/workbench/customer/saveCreateCustomerRemark.do")
+    @ResponseBody
+    public Object saveCreateCustomerRemark(CustomerRemark remark, HttpSession session) {
+        User user = (User) session.getAttribute(MyConstants.SESSION_USER);
+        ReturnObject returnObject = null;
+        //封装前端未上传参数
+        remark.setId(UUIDUtils.getUUID());
+        remark.setCreateTime(DateFormatUtils.getSysDateTime());
+        remark.setCreateBy(user.getId());
+        remark.setEditFlag(MyConstants.REMARK_EDIT_FLAG_NOT_MODIFIED);
+        try {
+            int rows = customerRemarkService.saveCreateCustomerRemark(remark);
+            //插入成功, 将封装好的remark对象返回, 便于前端进行局部刷新
+            returnObject = ReturnObject.getReturnObjectByRows(rows, remark);
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject = ReturnObject.getFailReturnObject();
+        }
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/deleteCustomerRemarkById.do")
+    @ResponseBody
+    public Object deleteCustomerRemarkById(String remarkId) {
+        ReturnObject returnObject = null;
+        try {
+            int rows = customerRemarkService.deleteCustomerRemarkById(remarkId);
+            returnObject = ReturnObject.getReturnObjectByRows(rows);
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject = ReturnObject.getFailReturnObject();
+        }
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/saveEditCustomerRemark.do")
+    @ResponseBody
+    public Object saveEditCustomerRemark(CustomerRemark remark, HttpSession session) {
+        User user = (User) session.getAttribute(MyConstants.SESSION_USER);
+        ReturnObject returnObject = null;
+        remark.setEditFlag(MyConstants.REMARK_EDIT_FLAG_MODIFIED);
+        remark.setEditBy(user.getId());
+        remark.setEditTime(DateFormatUtils.getSysDateTime());
+        try {
+            int rows = customerRemarkService.saveEditCustomerRemark(remark);
+            //成功后将封装好的remark对象返回
+            returnObject = ReturnObject.getReturnObjectByRows(rows, remark);
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject = ReturnObject.getFailReturnObject();
+        }
+        return returnObject;
     }
 }
 

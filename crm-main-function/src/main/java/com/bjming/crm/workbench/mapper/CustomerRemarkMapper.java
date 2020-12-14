@@ -67,4 +67,28 @@ public interface CustomerRemarkMapper {
      * @return
      */
     List<CustomerRemark> selectCustomerRemarkForDetailByCustomerId(String customerId);
+
+    /**
+     * 从实体类中插入一条记录
+     *
+     * @param remark
+     * @return
+     */
+    int insertCustomerRemark(CustomerRemark remark);
+
+    /**
+     * 根据id删除一条客户备注记录
+     *
+     * @param id
+     * @return
+     */
+    int deleteCustomerRemarkById(String id);
+
+    /**
+     * 从实体类中更新一条记录
+     *
+     * @param remark
+     * @return
+     */
+    int updateCustomerRemark(CustomerRemark remark);
 }

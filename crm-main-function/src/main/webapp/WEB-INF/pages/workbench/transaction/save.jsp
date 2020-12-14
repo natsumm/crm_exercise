@@ -33,7 +33,8 @@
                 todayBtn: true,
                 clearBtn: true,
                 autoclose: true,
-                todayHighlight: true
+                todayHighlight: true,
+                pickerPosition: "top-right"
             });
             //-----------------------------------------------
             //查找市场活动图标的单击事件 --> 初始化完成后, 弹出模态窗口

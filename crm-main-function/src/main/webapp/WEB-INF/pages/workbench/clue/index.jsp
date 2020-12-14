@@ -35,7 +35,7 @@
                 clearBtn: true, //"清空"按钮
                 autoclose: true, //选择日期后自动关闭
                 todayHighlight: true, //"今天"高亮显示
-                pickerPosition: "top-left" //日历的显示位置
+                pickerPosition: "top-right" //日历的显示位置
             });
             //"创建"按钮单击事件 --> 初始化工作完成后, 弹出模态窗口
             $("#createClueBtn").click(function () {
