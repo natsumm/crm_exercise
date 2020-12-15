@@ -66,7 +66,7 @@ public interface CustomerMapper {
      * @param name
      * @return customerList
      */
-    List<Customer> selectCustomerByName(String name);
+    List<String> selectCustomerNameByName(String name);
 
     /**
      * 根据条件进行分页查询客户
@@ -115,4 +115,12 @@ public interface CustomerMapper {
      * @return
      */
     Customer selectCustomerForDetailById(String id);
+
+    /**
+     * 根据name精确查询客户, 现实世界中 公司的全名是唯一的, 需要在工商部注册
+     *
+     * @param name
+     * @return
+     */
+    Customer selectCustomerByName(String name);
 }

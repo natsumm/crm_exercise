@@ -9,7 +9,7 @@ import java.util.Map;
  * 2020/12/13 by AshenOne
  */
 public interface CustomerService {
-    List<Customer> queryCustomerByName(String name);
+    List<String> queryCustomerNameByName(String name);
 
     int saveCreateCustomer(Customer customer);
 

@@ -233,16 +233,15 @@
     (#{id}, #{owner}, #{name}, #{website}, #{phone}, #{createBy}, #{createTime}, #{contactSummary}, #{nextContactTime}, #{description}, #{address})
   </insert>
 
-  <select id="selectCustomerByName" parameterType="string" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List"/>
+    <select id="selectCustomerNameByName" parameterType="string" resultType="string">
+    select name
     from tbl_customer
     where name like "%" #{name} "%"
   </select>
 
   <!--name, owner, phone, website, beginNo, pageSize-->
   <select id="selectCustomerByConditionForPage" parameterType="map" resultMap="BaseResultMap">
-    select c.id, u1.name as owner, c.name, c.website, c.phone
+      select c.id, u1.name as owner, c.name, ifnull(c.website,"") as website, ifnull(c.phone,"") as phone
     from tbl_customer c
     join tbl_user u1 on c.owner=u1.id
     <where>
@@ -323,4 +322,11 @@
     left join tbl_user u3 on c.edit_by=u3.id
     where c.id=#{id}
   </select>
+
+    <select id="selectCustomerByName" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_customer
+        where name=#{name}
+    </select>
 </mapper>

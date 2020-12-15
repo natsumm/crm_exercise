@@ -3,6 +3,7 @@ package com.bjming.crm.workbench.mapper;
 import com.bjming.crm.workbench.domain.Tran;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TranMapper {
     /**
@@ -62,7 +63,29 @@ public interface TranMapper {
      */
     int insertTran(Tran tran);
 
+    /**
+     * 根据客户id查询多条交易记录
+     *
+     * @param customerId
+     * @return
+     */
     List<Tran> selectTranForDetailByCustomerId(String customerId);
+
+    /**
+     * 根据条件分页查询交易记录, 外键字段采用连接查询, 字段值为null时, 变为""
+     *
+     * @param map owner, name, customerName, stage, type, source, contactsName, beginNo, pageSize
+     * @return
+     */
+    List<Tran> selectTranByConditionForPage(Map<String, Object> map);
+
+    /**
+     * 查询满足条件的交易记录行数
+     *
+     * @param map owner, name, customerName, stage, type, source, contactsName, beginNo, pageSize
+     * @return
+     */
+    int selectCountOfTranByCondition(Map<String, Object> map);
 
     /**
      * 根据主键字段删除一条记录

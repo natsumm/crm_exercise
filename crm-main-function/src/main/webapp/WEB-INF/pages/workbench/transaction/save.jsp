@@ -33,8 +33,7 @@
                 todayBtn: true,
                 clearBtn: true,
                 autoclose: true,
-                todayHighlight: true,
-                pickerPosition: "top-right"
+                todayHighlight: true
             });
             //-----------------------------------------------
             //查找市场活动图标的单击事件 --> 初始化完成后, 弹出模态窗口
@@ -122,30 +121,122 @@
                 $("#create-contactsName").val(contactsName);
                 $("#findContacts").modal("hide");
             });
+            //根据交易阶段 stage下拉列表的变化来进行动态的生成可能性
+            //create-stage, 注意onchange事件是select标签的事件, 而不是option标签的;
+            $("#create-stage").change(function () {
+                //alert($(this).children("option:selected").text()); //使用后可以获取到被选中的下拉列表的文本值
+                var stageValue = $("#create-stage>option:selected").text();
+
+                if (stageValue == "") {
+                    //参数为空时, 将可能性置为0, 不发请求
+                    $("#create-possibility").val(0);
+                    return;
+                }
+                $.ajax({
+                    url: "workbench/transaction/queryPossibilityByStageValue.do",
+                    data: {
+                        stageValue: stageValue
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        //直接为可能性文本框赋值
+                        $("#create-possibility").val(resp);
+                    }
+                });
+            });
+
             //-----------------------------------------------
             //客户名称自动补全
             $("#create-customerName").typeahead({
                 source: function (query, process) {
-                    var customerName = $.trim(query);
+                    //var customerName = this.value; //这种方式取不到值, source并不是一个事件的回调函数
+                    //函数的参数query就表示了用户输入的内容
                     $.ajax({
-                        url: "workbench/transaction/queryCustomerByName.do",
+                        url: "workbench/transaction/queryCustomerNameByName.do",
                         data: {
-                            customerName: customerName
+                            customerName: query
                         },
                         type: "post",
                         dataType: "json",
                         success: function (resp) {
-                            process(resp);
+                            process(resp); //process是一个函数, 作用就是将字符串数组赋值给source
                         }
                     });
-                },
-                updater: function (item) {
-                    //客户id赋值到隐藏域
-                    $("#create-customerId").val(item.id);
-                    //客户名称显示到输入框, 直接return即可, 不需要再另外赋值, 这个函数的返回值就是最终显示到输入框中的内容
-                    //$("#create-customerName").val(item.name);
-                    return item.name;
                 }
+            });
+            //-----------------------------------------------
+            //"保存"按钮单击事件
+            $("#saveCreateTranBtn").click(function () {
+                //收集参数
+                var owner = $.trim($("#create-owner").val());
+                var money = $.trim($("#create-money").val());
+                var name = $.trim($("#create-name").val());
+                var expectedDate = $.trim($("#create-expectedDate").val());
+                var stage = $.trim($("#create-stage").val());
+                var type = $.trim($("#create-type").val());
+                var source = $.trim($("#create-source").val());
+                var activityId = $.trim($("#create-activityId").val());
+                var contactsId = $.trim($("#create-contactsId").val());
+                var description = $.trim($("#create-description").val());
+                var contactSummary = $.trim($("#create-contactSummary").val());
+                var nextContactTime = $.trim($("#create-nextContactTime").val());
+                var customerName = $.trim($("#create-customerName").val());
+                //表单验证
+                if (owner == "") {
+                    alert("所有者不能为空");
+                    return;
+                }
+                if (!/^\d+$ 或 ^[1-9]\d*|0$/.test(money)) {
+                    alert("金额为非负整数");
+                    return;
+                }
+                if (name == "") {
+                    alert("名称不能为空");
+                    return;
+                }
+                if (expectedDate == "") {
+                    alert("预计成交日期不能为空");
+                    return;
+                }
+                if (customerName == "") {
+                    alert("客户名称不能为空");
+                    return;
+                }
+                if (stage == "") {
+                    alert("交易阶段不能为空");
+                    return;
+                }
+                //发起请求
+                $.ajax({
+                    url: "workbench/transaction/saveCreateTran.do",
+                    data: {
+                        owner: owner,
+                        money: money,
+                        name: name,
+                        expectedDate: expectedDate,
+                        stage: stage,
+                        type: type,
+                        source: source,
+                        activityId: activityId,
+                        contactsId: contactsId,
+                        description: description,
+                        contactSummary: contactSummary,
+                        nextContactTime: nextContactTime,
+                        customerName: customerName
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        if (resp.code == "1") {
+                            //保存成功之后，跳转到交易主页面
+                            window.location.href = "workbench/transaction/toIndex.do";
+                        } else {
+                            //保存失败，提示信息，页面不跳转
+                            alert(resp.msg);
+                        }
+                    }
+                });
             });
         });
     </script>
@@ -245,7 +336,7 @@
 <div style="position:  relative; left: 30px;">
     <h3>创建交易</h3>
     <div style="position: relative; top: -40px; left: 70%;">
-        <button type="button" class="btn btn-primary">保存</button>
+        <button type="button" id="saveCreateTranBtn" class="btn btn-primary">保存</button>
         <button type="button" class="btn btn-default">取消</button>
     </div>
     <hr style="position: relative; top: -40px;">
@@ -283,7 +374,8 @@
         <label for="create-customerName" class="col-sm-2 control-label">客户名称<span
                 style="font-size: 15px; color: red;">*</span></label>
         <div class="col-sm-10" style="width: 300px;">
-            <input type="hidden" id="create-customerId">
+            <%--<input type="hidden" id="create-customerId">--%>
+            <%--公司的全称是唯一的, 根据输入的内容到数据库进行查询, 如果有这个公司就复制到customerId字段, 如果没有就创建这个公司记录--%>
             <input type="text" class="form-control" id="create-customerName" placeholder="支持自动补全，输入客户不存在则新建">
         </div>
         <label for="create-stage" class="col-sm-2 control-label">阶段<span
@@ -310,7 +402,7 @@
         </div>
         <label for="create-possibility" class="col-sm-2 control-label">可能性</label>
         <div class="col-sm-10" style="width: 300px;">
-            <input type="text" class="form-control" id="create-possibility">
+            <input type="text" class="form-control" id="create-possibility" readonly>
         </div>
     </div>
 

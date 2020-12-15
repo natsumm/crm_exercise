@@ -18,8 +18,8 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerMapper customerMapper;
 
     @Override
-    public List<Customer> queryCustomerByName(String name) {
-        return customerMapper.selectCustomerByName(name);
+    public List<String> queryCustomerNameByName(String name) {
+        return customerMapper.selectCustomerNameByName(name);
     }
 
     @Override
