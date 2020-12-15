@@ -25,6 +25,11 @@ public class ContactsServiceImpl implements ContactsService {
     public List<Contacts> queryContactsForDetailByCustomerId(String customerId) {
         return contactsMapper.selectContactsForDetailByCustomerId(customerId);
     }
+
+    @Override
+    public int deleteContactsById(String id) {
+        return contactsMapper.deleteContactsById(id);
+    }
 }
 
 

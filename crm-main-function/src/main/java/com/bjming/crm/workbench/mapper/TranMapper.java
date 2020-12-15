@@ -63,4 +63,12 @@ public interface TranMapper {
     int insertTran(Tran tran);
 
     List<Tran> selectTranForDetailByCustomerId(String customerId);
+
+    /**
+     * 根据主键字段删除一条记录
+     *
+     * @param id
+     * @return
+     */
+    int deleteTranById(String id);
 }

@@ -20,6 +20,11 @@ public class TranServiceImpl implements TranService {
     public List<Tran> queryTranForDetailByCustomerId(String customerId) {
         return tranMapper.selectTranForDetailByCustomerId(customerId);
     }
+
+    @Override
+    public int deleteTranById(String id) {
+        return tranMapper.deleteTranById(id);
+    }
 }
 
 

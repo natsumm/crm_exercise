@@ -75,4 +75,12 @@ public interface ContactsMapper {
      * @return
      */
     List<Contacts> selectContactsForDetailByCustomerId(String customerId);
+
+    /**
+     * 根据主键字段删除一条数据
+     *
+     * @param id
+     * @return
+     */
+    int deleteContactsById(String id);
 }

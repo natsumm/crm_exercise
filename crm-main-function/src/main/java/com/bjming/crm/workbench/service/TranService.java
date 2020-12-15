@@ -9,6 +9,8 @@ import java.util.List;
  */
 public interface TranService {
     List<Tran> queryTranForDetailByCustomerId(String customerId);
+
+    int deleteTranById(String id);
 }
 
 

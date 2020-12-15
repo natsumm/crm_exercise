@@ -5,6 +5,7 @@ import com.bjming.crm.commons.domain.ReturnObject;
 import com.bjming.crm.commons.utils.DateFormatUtils;
 import com.bjming.crm.commons.utils.UUIDUtils;
 import com.bjming.crm.settings.domain.User;
+import com.bjming.crm.settings.service.DicValueService;
 import com.bjming.crm.settings.service.UserService;
 import com.bjming.crm.workbench.domain.Customer;
 import com.bjming.crm.workbench.domain.CustomerRemark;
@@ -38,6 +39,8 @@ public class CustomerController {
     private ContactsService contactsService;
     @Autowired
     private TranService tranService;
+    @Autowired
+    private DicValueService dicValueService;
 
     @RequestMapping("/workbench/customer/toIndex.do")
     public ModelAndView toIndex() {
@@ -128,6 +131,10 @@ public class CustomerController {
         mv.addObject("customerRemarkList", customerRemarkService.queryCustomerRemarkForDetailByCustomerId(customerId));
         mv.addObject("tranList", tranService.queryTranForDetailByCustomerId(customerId));
         mv.addObject("contactsList", contactsService.queryContactsForDetailByCustomerId(customerId));
+        //查询创建交易需要的下拉列表
+        mv.addObject("userList", userService.queryAllAvailableUsers());
+        mv.addObject("sourceList", dicValueService.queryDicValuesByTypeCode("source"));
+        mv.addObject("appellationList", dicValueService.queryDicValuesByTypeCode("appellation"));
         mv.setViewName("workbench/customer/detail");
         return mv;
     }
@@ -179,6 +186,34 @@ public class CustomerController {
             int rows = customerRemarkService.saveEditCustomerRemark(remark);
             //成功后将封装好的remark对象返回
             returnObject = ReturnObject.getReturnObjectByRows(rows, remark);
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject = ReturnObject.getFailReturnObject();
+        }
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/deleteTranById.do")
+    @ResponseBody
+    public Object deleteTranById(String tranId) {
+        ReturnObject returnObject = null;
+        try {
+            int rows = tranService.deleteTranById(tranId);
+            returnObject = ReturnObject.getReturnObjectByRows(rows);
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject = ReturnObject.getFailReturnObject();
+        }
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/deleteContactsById.do")
+    @ResponseBody
+    public Object deleteContactsById(String contactsId) {
+        ReturnObject returnObject = null;
+        try {
+            int rows = contactsService.deleteContactsById(contactsId);
+            returnObject = ReturnObject.getReturnObjectByRows(rows);
         } catch (Exception e) {
             e.printStackTrace();
             returnObject = ReturnObject.getFailReturnObject();

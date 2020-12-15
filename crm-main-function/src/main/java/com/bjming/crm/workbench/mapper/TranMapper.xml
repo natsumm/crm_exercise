@@ -315,4 +315,9 @@
         left join tbl_dic_value v2 on t.type=v2.id
         where t.customer_id=#{customerId}
     </select>
+
+    <delete id="deleteTranById" parameterType="string">
+        delete from tbl_tran
+        where id=#{id}
+    </delete>
 </mapper>

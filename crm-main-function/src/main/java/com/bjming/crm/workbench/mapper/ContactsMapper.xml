@@ -293,4 +293,9 @@
     from tbl_contacts
     where customer_id=#{customerId}
   </select>
+
+  <delete id="deleteContactsById" parameterType="string">
+    delete from tbl_contacts
+    where id=#{id}
+  </delete>
 </mapper>

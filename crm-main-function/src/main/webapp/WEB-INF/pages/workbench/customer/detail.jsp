@@ -10,8 +10,14 @@
     <meta charset="UTF-8">
 
     <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css"
+          rel="stylesheet"/>
+
     <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript"
+            src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
     <script type="text/javascript">
 
@@ -56,7 +62,18 @@
             $("#remarkListDiv").on("mouseout", ".myHref", function () {
                 $(this).children("span").css("color", "#E6E6E6");
             });
-
+            //日历插件
+            $(".myCal").datetimepicker({
+                language: "zh-CN",
+                format: "yyyy-mm-dd",
+                minView: "month",
+                initialDate: new Date(),
+                todayBtn: true,
+                clearBtn: true,
+                autoclose: true,
+                todayHighlight: true,
+                pickerPosition: "top-right"
+            });
             //备注的保存按钮单击事件
             $("#saveCreateCustomerRemarkBtn").click(function () {
                 //收集参数
@@ -164,6 +181,71 @@
                     }
                 });
             });
+
+            //交易"删除"标签单击事件
+            $("#queryTranResTbody").on("click", "a[name='deleteTranA']", function () {
+                var tranId = $(this).attr("tranId");
+                //tranId放入隐藏域, 弹起模态窗口
+                $("#tranId").val(tranId);
+                $("#removeTransactionModal").modal("show");
+            });
+
+            //删除交易模态窗口"删除"按钮单击事件
+            $("#deleteTranBtn").click(function () {
+                //获取隐藏域中的id
+                var tranId = $("#tranId").val();
+                //发起请求
+                $.ajax({
+                    url: "workbench/customer/deleteTranById.do",
+                    data: {
+                        tranId: tranId
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        if (resp.code == "1") {
+                            //关闭模态窗口, 刷新页面
+                            $("#removeTransactionModal").modal("hide");
+                            $("#tran_" + tranId).remove();
+                        } else {
+                            //提示信息, 模态窗口不关闭, 页面也不刷新
+                            alert(resp.msg);
+                            $("#removeTransactionModal").modal("show");
+                        }
+                    }
+                });
+            });
+
+            //联系人的删除标签单击事件, id放入隐藏域, 弹起模态窗口
+            $("#queryContactsResTbody").on("click", "a[name='deleteContactsA']", function () {
+                var contactsId = $(this).attr("contactsId");
+                $("#contactsId").val(contactsId);
+                $("#removeContactsModal").modal("show");
+            });
+
+            //删除联系人模态窗口, "删除"按钮单击事件
+            $("#deleteContactsBtn").click(function () {
+                var contactsId = $("#contactsId").val();
+                $.ajax({
+                    url: "workbench/customer/deleteContactsById.do",
+                    data: {
+                        contactsId: contactsId
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (resp) {
+                        if (resp.code == "1") {
+                            //关闭模态窗口, 刷新页面
+                            $("#removeContactsModal").modal("hide");
+                            $("#contacts_" + contactsId).remove();
+                        } else {
+                            //提示信息, 模态窗口不关闭, 页面也不刷新
+                            alert(resp.msg);
+                            $("#removeContactsModal").modal("show");
+                        }
+                    }
+                });
+            });
         });
 
     </script>
@@ -203,6 +285,8 @@
 
 <!-- 删除联系人的模态窗口 -->
 <div class="modal fade" id="removeContactsModal" role="dialog">
+    <%-- 联系人的id --%>
+    <input type="hidden" id="contactsId"/>
     <div class="modal-dialog" role="document" style="width: 30%;">
         <div class="modal-content">
             <div class="modal-header">
@@ -216,7 +300,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">删除</button>
+                <button type="button" class="btn btn-danger" id="deleteContactsBtn">删除</button>
             </div>
         </div>
     </div>
@@ -224,6 +308,8 @@
 
 <!-- 删除交易的模态窗口 -->
 <div class="modal fade" id="removeTransactionModal" role="dialog">
+    <%-- 交易的id --%>
+    <input type="hidden" id="tranId"/>
     <div class="modal-dialog" role="document" style="width: 30%;">
         <div class="modal-content">
             <div class="modal-header">
@@ -237,7 +323,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">删除</button>
+                <button type="button" class="btn btn-danger" id="deleteTranBtn">删除</button>
             </div>
         </div>
     </div>
@@ -257,52 +343,39 @@
                 <form class="form-horizontal" role="form">
 
                     <div class="form-group">
-                        <label for="create-contactsOwner" class="col-sm-2 control-label">所有者<span
+                        <label for="create-owner" class="col-sm-2 control-label">所有者<span
                                 style="font-size: 15px; color: red;">*</span></label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <select class="form-control" id="create-contactsOwner">
-                                <option>zhangsan</option>
-                                <option>lisi</option>
-                                <option>wangwu</option>
+                            <select class="form-control" id="create-owner">
+                                <c:forEach items="${userList}" var="user">
+                                    <option value="${user.id}">${user.name}</option>
+                                </c:forEach>
                             </select>
                         </div>
-                        <label for="create-clueSource" class="col-sm-2 control-label">来源</label>
+                        <label for="create-surce" class="col-sm-2 control-label">来源</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <select class="form-control" id="create-clueSource">
+                            <select class="form-control" id="create-surce">
                                 <option></option>
-                                <option>广告</option>
-                                <option>推销电话</option>
-                                <option>员工介绍</option>
-                                <option>外部介绍</option>
-                                <option>在线商场</option>
-                                <option>合作伙伴</option>
-                                <option>公开媒介</option>
-                                <option>销售邮件</option>
-                                <option>合作伙伴研讨会</option>
-                                <option>内部研讨会</option>
-                                <option>交易会</option>
-                                <option>web下载</option>
-                                <option>web调研</option>
-                                <option>聊天</option>
+                                <c:forEach items="${sourceList}" var="source">
+                                    <option value="${source.id}">${source.value}</option>
+                                </c:forEach>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="create-surname" class="col-sm-2 control-label">姓名<span
+                        <label for="create-fullname" class="col-sm-2 control-label">姓名<span
                                 style="font-size: 15px; color: red;">*</span></label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-surname">
+                            <input type="text" class="form-control" id="create-fullname">
                         </div>
-                        <label for="create-call" class="col-sm-2 control-label">称呼</label>
+                        <label for="create-appellation" class="col-sm-2 control-label">称呼</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <select class="form-control" id="create-call">
+                            <select class="form-control" id="create-appellation">
                                 <option></option>
-                                <option>先生</option>
-                                <option>夫人</option>
-                                <option>女士</option>
-                                <option>博士</option>
-                                <option>教授</option>
+                                <c:forEach items="${appellationList}" var="a">
+                                    <option value="${a.id}">${a.value}</option>
+                                </c:forEach>
                             </select>
                         </div>
 
@@ -333,15 +406,15 @@
                     <div class="form-group" style="position: relative;">
                         <label for="create-customerName" class="col-sm-2 control-label">客户名称</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-customerName"
+                            <input type="text" class="form-control" id="create-customerName" value="${customer.name}"
                                    placeholder="支持自动补全，输入客户不存在则新建">
                         </div>
                     </div>
 
                     <div class="form-group" style="position: relative;">
-                        <label for="create-describe" class="col-sm-2 control-label">描述</label>
+                        <label for="create-description" class="col-sm-2 control-label">描述</label>
                         <div class="col-sm-10" style="width: 81%;">
-                            <textarea class="form-control" rows="3" id="create-describe"></textarea>
+                            <textarea class="form-control" rows="3" id="create-description"></textarea>
                         </div>
                     </div>
 
@@ -349,15 +422,15 @@
 
                     <div style="position: relative;top: 15px;">
                         <div class="form-group">
-                            <label for="edit-contactSummary" class="col-sm-2 control-label">联系纪要</label>
+                            <label for="create-contactSummary" class="col-sm-2 control-label">联系纪要</label>
                             <div class="col-sm-10" style="width: 81%;">
-                                <textarea class="form-control" rows="3" id="edit-contactSummary">这个线索即将被转换</textarea>
+                                <textarea class="form-control" rows="3" id="create-contactSummary">这个线索即将被转换</textarea>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="edit-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
+                            <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-nextContactTime" value="2017-05-01">
+                                <input type="text" class="form-control myCal" id="create-nextContactTime" readonly>
                             </div>
                         </div>
                     </div>
@@ -366,9 +439,9 @@
 
                     <div style="position: relative;top: 20px;">
                         <div class="form-group">
-                            <label for="edit-address1" class="col-sm-2 control-label">详细地址</label>
+                            <label for="create-address" class="col-sm-2 control-label">详细地址</label>
                             <div class="col-sm-10" style="width: 81%;">
-                                <textarea class="form-control" rows="1" id="edit-address1">北京大兴区大族企业湾</textarea>
+                                <textarea class="form-control" rows="1" id="create-address">北京大兴区大族企业湾</textarea>
                             </div>
                         </div>
                     </div>
@@ -549,7 +622,7 @@
                     <td></td>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="queryTranResTbody">
                 <%--<tr>
                     <td><a href="transaction/detail.html" style="text-decoration: none;">动力节点-交易01</a></td>
                     <td>5,000</td>
@@ -560,7 +633,7 @@
                     <td><a href="javascript:void(0);" data-toggle="modal" data-target="#removeTransactionModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
                 </tr>--%>
                 <c:forEach items="${tranList}" var="tran">
-                    <tr>
+                    <tr id="tran_${tran.id}">
                         <td><a href="transaction/detail.html" tranId="${tran.id}"
                                style="text-decoration: none;">${tran.name}</a></td>
                         <td>${tran.money}</td>
@@ -568,9 +641,9 @@
                         <td>900</td>
                         <td>${tran.expectedDate}</td>
                         <td>${tran.type}</td>
-                        <td><a href="javascript:void(0);" tranId="${tran.id}" data-toggle="modal"
-                               data-target="#removeTransactionModal" style="text-decoration: none;"><span
-                                class="glyphicon glyphicon-remove"></span>删除</a></td>
+                        <td><a href="javascript:void(0);" name="deleteTranA" tranId="${tran.id}"
+                               style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a>
+                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -600,7 +673,7 @@
                     <td></td>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="queryContactsResTbody">
                 <%--<tr>
                     <td><a href="contacts/detail.html" style="text-decoration: none;">李四</a></td>
                     <td>lisi@bjpowernode.com</td>
@@ -608,14 +681,14 @@
                     <td><a href="javascript:void(0);" data-toggle="modal" data-target="#removeContactsModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
                 </tr>--%>
                 <c:forEach items="${contactsList}" var="c">
-                    <tr>
+                    <tr id="contacts_${c.id}">
                         <td><a href="contacts/detail.html" contactsId="${c.id}"
                                style="text-decoration: none;">${c.fullname}</a></td>
                         <td>${c.email}</td>
                         <td>${c.mphone}</td>
-                        <td><a href="javascript:void(0);" contactsId="${c.id}" data-toggle="modal"
-                               data-target="#removeContactsModal" style="text-decoration: none;"><span
-                                class="glyphicon glyphicon-remove"></span>删除</a></td>
+                        <td><a href="javascript:void(0);" contactsId="${c.id}" name="deleteContactsA"
+                               style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a>
+                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>

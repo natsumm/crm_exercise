@@ -11,4 +11,6 @@ public interface ContactsService {
     List<Contacts> queryContactsByFullName(String fullname);
 
     List<Contacts> queryContactsForDetailByCustomerId(String customerId);
+
+    int deleteContactsById(String id);
 }
