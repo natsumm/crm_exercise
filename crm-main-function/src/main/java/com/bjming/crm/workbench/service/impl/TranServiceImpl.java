@@ -85,6 +85,17 @@ public class TranServiceImpl implements TranService {
     public List<Map> queryCountOfTranGroupByStage() {
         return tranMapper.selectCountOfTranGroupByStage();
     }
+
+    @Override
+    public Tran queryTranForDetailById(String id) {
+        Tran tran = tranMapper.selectTranForDetailById(id);
+        if (tran != null) { //根据交易的阶段, 从配置文件中查询交易的可能性
+            ResourceBundle bundle = ResourceBundle.getBundle("possibility");
+            String possibility = bundle.getString(tran.getStage());
+            tran.setPossibility(possibility);
+        }
+        return tran;
+    }
 }
 
 

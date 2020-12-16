@@ -624,7 +624,7 @@
                 </thead>
                 <tbody id="queryTranResTbody">
                 <%--<tr>
-                    <td><a href="transaction/detail.html" style="text-decoration: none;">动力节点-交易01</a></td>
+                    <td><a href="transaction/detail.jsp" style="text-decoration: none;">动力节点-交易01</a></td>
                     <td>5,000</td>
                     <td>谈判/复审</td>
                     <td>90</td>
@@ -675,7 +675,7 @@
                 </thead>
                 <tbody id="queryContactsResTbody">
                 <%--<tr>
-                    <td><a href="contacts/detail.html" style="text-decoration: none;">李四</a></td>
+                    <td><a href="contacts/detail.jsp" style="text-decoration: none;">李四</a></td>
                     <td>lisi@bjpowernode.com</td>
                     <td>13543645364</td>
                     <td><a href="javascript:void(0);" data-toggle="modal" data-target="#removeContactsModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>

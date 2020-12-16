@@ -2,13 +2,11 @@ package com.bjming.crm.workbench.web.controller;
 
 import com.bjming.crm.commons.contsants.MyConstants;
 import com.bjming.crm.commons.domain.ReturnObject;
+import com.bjming.crm.settings.domain.DicValue;
 import com.bjming.crm.settings.service.DicValueService;
 import com.bjming.crm.settings.service.UserService;
 import com.bjming.crm.workbench.domain.Tran;
-import com.bjming.crm.workbench.service.ActivityService;
-import com.bjming.crm.workbench.service.ContactsService;
-import com.bjming.crm.workbench.service.CustomerService;
-import com.bjming.crm.workbench.service.TranService;
+import com.bjming.crm.workbench.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +37,10 @@ public class TransactionController {
     private CustomerService customerService;
     @Autowired
     private TranService tranService;
+    @Autowired
+    private TranRemarkService tranRemarkService;
+    @Autowired
+    private TranHistoryService tranHistoryService;
     @RequestMapping("/workbench/transaction/toIndex.do")
     public ModelAndView toIndex() {
         ModelAndView mv = new ModelAndView();
@@ -127,6 +129,26 @@ public class TransactionController {
         map.put("tranList", tranList);
         map.put("totalRows", totalRows);
         return map;
+    }
+
+    @RequestMapping("/workbench/transaction/toDetail.do")
+    public ModelAndView toDetail(String tranId) {
+        ModelAndView mv = new ModelAndView();
+        //查询数据并放入request中
+        //查询表中所有的阶段信息, 并排序号排序
+        List<DicValue> stageList = dicValueService.queryDicValuesByTypeCode("stage");
+        mv.addObject("stageList", stageList);
+        /**
+         * 可以在后台直接获取stageList集合的长度, 然后传到前台,
+         *      tips: 当从前台获取某些数据比较困难时, 可以考虑从后台获取, 然后传给前台
+         *      mv.addObject("stageListLength", stageList.size());
+         */
+        mv.addObject("tran", tranService.queryTranForDetailById(tranId));
+        mv.addObject("remarkList", tranRemarkService.queryTranRemarkForDetailByTranId(tranId));
+        mv.addObject("historyList", tranHistoryService.queryTranHistoryForDetailByTranId(tranId));
+        //请求转发
+        mv.setViewName("workbench/transaction/detail");
+        return mv;
     }
 }
 

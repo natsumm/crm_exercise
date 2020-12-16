@@ -20,6 +20,8 @@ public interface TranService {
     int queryCountOfTranByCondition(Map<String, Object> map);
 
     List<Map> queryCountOfTranGroupByStage();
+
+    Tran queryTranForDetailById(String id);
 }
 
 

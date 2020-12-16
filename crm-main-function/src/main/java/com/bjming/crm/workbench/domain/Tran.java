@@ -1,7 +1,9 @@
 package com.bjming.crm.workbench.domain;
 
 public class Tran {
-
+    /**
+     * 为了前后端传输数据方便而增加的属性, tbl_tran表中没有对应字段
+     */
     private String possibility;
 
     public String getPossibility() {
@@ -10,6 +12,19 @@ public class Tran {
 
     public void setPossibility(String possibility) {
         this.possibility = possibility;
+    }
+
+    /**
+     * 为了图标的显示而增加的属性, 排序号,  tbl_tran表中没有对应字段
+     */
+    private String orderNo;
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 
     /**

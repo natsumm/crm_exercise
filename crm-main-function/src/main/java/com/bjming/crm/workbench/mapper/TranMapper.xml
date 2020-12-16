@@ -25,6 +25,7 @@
         <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="contact_summary" property="contactSummary" jdbcType="VARCHAR"/>
         <result column="next_contact_time" property="nextContactTime" jdbcType="CHAR"/>
+        <result column="order_no" property="orderNo" jdbcType="CHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--
@@ -399,5 +400,23 @@
         from tbl_tran t
         join tbl_dic_value v1 on t.stage=v1.id
         group by t.stage
+    </select>
+
+    <select id="selectTranForDetailById" parameterType="string" resultMap="BaseResultMap">
+        select t.id, u1.name as owner, t.money, t.name, t.expected_date, c.name as customer_id,
+               v1.value as stage, v1.order_no, v2.value as type, v3.value as source, a.name as activity_id,
+               co.fullname as contacts_id, u2.name as create_by, t.create_time, u3.name as edit_by,
+               t.edit_time, t.description, t.contact_summary, t.next_contact_time
+        from tbl_tran t
+        join tbl_user u1 on t.owner=u1.id
+        join tbl_customer c on t.customer_id=c.id
+        join tbl_dic_value v1 on t.stage=v1.id
+        left join tbl_dic_value v2 on t.type=v2.id
+        left join tbl_dic_value v3 on t.source=v3.id
+        left join tbl_activity a on t.activity_id=a.id
+        left join tbl_contacts co on t.contacts_id=co.id
+        join tbl_user u2 on t.create_by=u2.id
+        left join tbl_user u3 on t.edit_by=u3.id
+        where t.id=#{id}
     </select>
 </mapper>

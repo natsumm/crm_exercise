@@ -62,4 +62,12 @@ public interface TranRemarkMapper {
      * @return
      */
     int insertTranRemarkByList(List<TranRemark> remarkList);
+
+    /**
+     * 根据tranId查询多条交易的备注记录, 外键字段采用连接查询
+     *
+     * @param tranId
+     * @return remarkList
+     */
+    List<TranRemark> selectTranRemarkForDetailByTranId(String tranId);
 }

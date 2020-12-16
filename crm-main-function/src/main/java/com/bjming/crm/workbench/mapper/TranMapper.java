@@ -98,7 +98,15 @@ public interface TranMapper {
     /**
      * 根据交易阶段分组查询各个交易阶段的交易数量
      *
-     * @return
+     * @return List<Map> map中--> name:xx, value:xxx
      */
     List<Map> selectCountOfTranGroupByStage();
+
+    /**
+     * 根据id查询交易的明细, 外键字段采用连接查询
+     *
+     * @param id tranId
+     * @return tran
+     */
+    Tran selectTranForDetailById(String id);
 }

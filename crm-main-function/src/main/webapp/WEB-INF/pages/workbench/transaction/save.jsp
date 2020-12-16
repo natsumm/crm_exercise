@@ -18,14 +18,12 @@
     <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
     <script type="text/javascript"
             src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
-
     <%--引入bs_typehead--%>
     <script type="text/javascript" src="jquery/bs_typeahead/bootstrap3-typeahead.min.js"></script>
     <script type="text/javascript">
         $(function () {
-            //-----------------------------------------------
-            //切记事件绑定要放在入口函数中
-            $(".myDate").datetimepicker({ //日历
+            //日历的参数
+            var datetimepickerOption = {
                 language: "zh-CN",
                 format: "yyyy-mm-dd",
                 minView: "month",
@@ -34,7 +32,12 @@
                 clearBtn: true,
                 autoclose: true,
                 todayHighlight: true
-            });
+            };
+            //-----------------------------------------------
+            //切记事件绑定要放在入口函数中
+            $(".myDate").datetimepicker(datetimepickerOption);
+            datetimepickerOption.pickerPosition = "top-right"; //修改日历的显示位置, 使下次联系时间的日历显示在输入框上边;
+            $("#create-nextContactTime").datetimepicker(datetimepickerOption);
             //-----------------------------------------------
             //查找市场活动图标的单击事件 --> 初始化完成后, 弹出模态窗口
             $("#queryActivityA").click(function () {
@@ -124,7 +127,8 @@
             //根据交易阶段 stage下拉列表的变化来进行动态的生成可能性
             //create-stage, 注意onchange事件是select标签的事件, 而不是option标签的;
             $("#create-stage").change(function () {
-                //alert($(this).children("option:selected").text()); //使用后可以获取到被选中的下拉列表的文本值
+                //alert($(this).children("option:selected").text()); //可以达到效果
+                //使用后可以获取到被选中的下拉列表的文本值, text()函数会拼接选择器选择中的选择器的字符串;
                 var stageValue = $("#create-stage>option:selected").text();
 
                 if (stageValue == "") {
@@ -238,6 +242,18 @@
                     }
                 });
             });
+
+            //"市场活动源"输入框的双击事件, --> 清空输入框, 并清空隐藏域中的市场活动id
+            $("#create-activityName").dblclick(function () {
+                $(this).val("");
+                $("#create-activityId").val("");
+            });
+
+            //"联系人名称"输入框的双击事件, --> 清空输入框, 并清空隐藏域中的联系人id
+            $("#create-contactsName").dblclick(function () {
+                $(this).val("");
+                $("#create-contactsId").val("");
+            });
         });
     </script>
 </head>
@@ -337,7 +353,7 @@
     <h3>创建交易</h3>
     <div style="position: relative; top: -40px; left: 70%;">
         <button type="button" id="saveCreateTranBtn" class="btn btn-primary">保存</button>
-        <button type="button" class="btn btn-default">取消</button>
+        <button type="button" class="btn btn-default" onclick="window.history.back()">取消</button>
     </div>
     <hr style="position: relative; top: -40px;">
 </div>
@@ -421,7 +437,7 @@
                 class="glyphicon glyphicon-search"></span></a></label>
         <div class="col-sm-10" style="width: 300px;">
             <input type="hidden" id="create-activityId">
-            <input type="text" class="form-control" id="create-activityName" readonly>
+            <input type="text" class="form-control" id="create-activityName" placeholder="点击左边搜索, 双击输入框清空" readonly>
         </div>
     </div>
 
@@ -431,7 +447,7 @@
                 class="glyphicon glyphicon-search"></span></a></label>
         <div class="col-sm-10" style="width: 300px;">
             <input type="hidden" id="create-contactsId">
-            <input type="text" class="form-control" id="create-contactsName" readonly>
+            <input type="text" class="form-control" id="create-contactsName" placeholder="点击左边搜索, 双击输入框清空" readonly>
         </div>
     </div>
 
@@ -452,7 +468,7 @@
     <div class="form-group">
         <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
         <div class="col-sm-10" style="width: 300px;">
-            <input type="text" class="form-control myDate" id="create-nextContactTime" readonly>
+            <input type="text" class="form-control" id="create-nextContactTime" readonly>
         </div>
     </div>
 

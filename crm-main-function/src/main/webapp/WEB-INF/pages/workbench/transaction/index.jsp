@@ -34,6 +34,12 @@
             $("#queryTranBtn").click(function () {
                 queryTranByConditionForPage(1, $("#pagination").bs_pagination("getOption", "rowsPerPage"));
             });
+
+            //用户点击"交易名称"a标签, 跳转至交易明细页面
+            $("#queryTranResTbody").on("click", "a", function () {
+                var tranId = $(this).attr("tranId");
+                window.location.href = "workbench/transaction/toDetail.do?tranId=" + tranId;
+            });
         });
 
         //分页查询交易
@@ -70,7 +76,7 @@
                     $.each(resp.tranList, function (i, e) {
                         htmlStr += "<tr>";
                         htmlStr += "<td><input type=\"checkbox\" value=\"" + e.id + "\"/></td>";
-                        htmlStr += "<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.jsp';\">" + e.name + "</a></td>";
+                        htmlStr += "<td><a tranId=\"" + e.id + "\" style=\"text-decoration: none; cursor: pointer;\">" + e.name + "</a></td>";
                         htmlStr += "<td>" + e.customerId + "</td>";
                         htmlStr += "<td>" + e.stage + "</td>";
                         htmlStr += "<td>" + e.type + "</td>";
