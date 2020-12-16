@@ -393,4 +393,11 @@
             </if>
         </where>
     </select>
+
+    <select id="selectCountOfTranGroupByStage" resultType="java.util.Map">
+        select v1.value as name, count(*) as value
+        from tbl_tran t
+        join tbl_dic_value v1 on t.stage=v1.id
+        group by t.stage
+    </select>
 </mapper>

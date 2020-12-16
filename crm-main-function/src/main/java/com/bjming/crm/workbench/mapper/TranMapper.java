@@ -94,4 +94,11 @@ public interface TranMapper {
      * @return
      */
     int deleteTranById(String id);
+
+    /**
+     * 根据交易阶段分组查询各个交易阶段的交易数量
+     *
+     * @return
+     */
+    List<Map> selectCountOfTranGroupByStage();
 }

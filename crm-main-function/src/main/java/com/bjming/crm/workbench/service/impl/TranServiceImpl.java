@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * 2020/12/13 by AshenOne
@@ -27,7 +28,16 @@ public class TranServiceImpl implements TranService {
 
     @Override
     public List<Tran> queryTranForDetailByCustomerId(String customerId) {
-        return tranMapper.selectTranForDetailByCustomerId(customerId);
+        ResourceBundle bundle = ResourceBundle.getBundle("possibility"); //不需要扩展名
+        List<Tran> tranList = tranMapper.selectTranForDetailByCustomerId(customerId);
+        //tran的阶段采用连接查询, 查询value, 这里再根据呀value从配置文件中读取可能性
+        if (tranList != null && tranList.size() > 0) {
+            for (Tran tran : tranList) {
+                String stageValue = tran.getStage();
+                tran.setPossibility(bundle.getString(stageValue));
+            }
+        }
+        return tranList;
     }
 
     @Override
@@ -69,6 +79,11 @@ public class TranServiceImpl implements TranService {
     @Override
     public int queryCountOfTranByCondition(Map<String, Object> map) {
         return tranMapper.selectCountOfTranByCondition(map);
+    }
+
+    @Override
+    public List<Map> queryCountOfTranGroupByStage() {
+        return tranMapper.selectCountOfTranGroupByStage();
     }
 }
 

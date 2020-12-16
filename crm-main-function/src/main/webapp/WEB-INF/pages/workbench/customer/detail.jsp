@@ -638,7 +638,7 @@
                                style="text-decoration: none;">${tran.name}</a></td>
                         <td>${tran.money}</td>
                         <td>${tran.stage}</td>
-                        <td>900</td>
+                        <td>${tran.possibility}</td>
                         <td>${tran.expectedDate}</td>
                         <td>${tran.type}</td>
                         <td><a href="javascript:void(0);" name="deleteTranA" tranId="${tran.id}"
@@ -651,7 +651,7 @@
         </div>
 
         <div>
-            <a href="transaction/save.jsp" style="text-decoration: none;"><span
+            <a href="workbench/transaction/toSave.do" style="text-decoration: none;"><span
                     class="glyphicon glyphicon-plus"></span>新建交易</a>
         </div>
     </div>
