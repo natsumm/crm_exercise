@@ -22,10 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -172,12 +169,17 @@ public class ActivityController {
         ReturnObject returnObject = null;
         User user = (User) session.getAttribute(MyConstants.SESSION_USER);
 
-        String serverFilePath = "F:/test/serverDir/" + activityFile.getName() + "_" + DateFormatUtils.getSysDateTimeStamp() + ".xls";
+        //String serverFilePath = "F:/test/serverDir/" + activityFile.getName() + "_" + DateFormatUtils.getSysDateTimeStamp() + ".xls";
         //将文件保存至服务端
-        activityFile.transferTo(new File(serverFilePath));
+        //activityFile.transferTo(new File(serverFilePath));
 
-        FileInputStream fis = new FileInputStream(serverFilePath);
-        HSSFWorkbook wb = new HSSFWorkbook(fis);
+        //FileInputStream fis = new FileInputStream(serverFilePath);
+        /**
+         * 优化导入市场活动, 不在服务端保存文件, 直接从内存中读取文件, 然后写入数据库,
+         * 资源谁开启, 谁关闭
+         */
+        InputStream is = activityFile.getInputStream();
+        HSSFWorkbook wb = new HSSFWorkbook(is);
         //使用工具方法得到实体类集合对象, create_by, owner字段默认使用系统中当前用户的id赋值
         List<Activity> activityList = HSSFUtils.getActivityListFromWorkbook(wb, user);
         try {
@@ -189,7 +191,7 @@ public class ActivityController {
         } finally {
             //关闭资源
             wb.close();
-            fis.close();
+            //fis.close();
         }
         return returnObject;
     }
