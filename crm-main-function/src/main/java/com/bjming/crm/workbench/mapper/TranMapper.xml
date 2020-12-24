@@ -361,7 +361,7 @@
         limit ${beginNo}, ${pageSize}
     </select>
 
-    <select id="selectCountOfTranByCondition" parameterType="string" resultType="int">
+    <select id="selectCountOfTranByCondition" parameterType="string" resultType="_int">
         select count(t.id)
         from tbl_tran t
         join tbl_user u1 on t.owner=u1.id
